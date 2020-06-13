@@ -11,7 +11,7 @@ scrapy-sentry = "*"
 city-scrapers-core = {extras = ["aws"],version = "*"}
 legistar = {git = "https://github.com/opencivicdata/python-legistar-scraper"}
 pywin32 = {version = "*",sys_platform = "== 'win32'"}
-pytest = {version = ">=5.4.3"}
+pytest = "*"
 
 [dev-packages]
 freezegun = "*"
