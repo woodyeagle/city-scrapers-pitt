@@ -8,9 +8,9 @@ requests = "*"
 scrapy = "*"
 python-dateutil = "*"
 scrapy-sentry = "*"
-city-scrapers-core = {extras = ["aws"],version = "*"}
 legistar = {git = "https://github.com/opencivicdata/python-legistar-scraper"}
 pywin32 = {version = "*",sys_platform = "== 'win32'"}
+city-scrapers-core = "*"
 
 [dev-packages]
 freezegun = "*"
