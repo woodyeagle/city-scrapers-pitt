@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "86f924404d3ee9f0792ed476c337e449e1afa33c0815d32ed06e71e60ae5c73d"
+            "sha256": "612260bbee0be09b14efd8a969b29b821a568e6e39873fc53088c6b310ab7dfc"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -298,6 +298,15 @@
             ],
             "version": "==19.1.0"
         },
+        "pypiwin32": {
+            "hashes": [
+                "sha256:67adf399debc1d5d14dffc1ab5acacb800da569754fafdc576b2a039485aa775",
+                "sha256:71be40c1fbd28594214ecaecb58e7aa8b708eabfa0125c8a109ebd51edbd776a"
+            ],
+            "index": "pypi",
+            "markers": "sys_platform == 'win32'",
+            "version": "==223"
+        },
         "pyrsistent": {
             "hashes": [
                 "sha256:28669905fe725965daa16184933676547c5bb40a5153055a8dee2a4bd7933ad3"
@@ -317,6 +326,7 @@
                 "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed",
                 "sha256:c35965d010ce31b23eeb663ed3cc8c906275d6be1a34393a1d73a41febf4a048"
             ],
+            "index": "pypi",
             "version": "==2020.1"
         },
         "pywin32": {
@@ -334,8 +344,6 @@
                 "sha256:ed74b72d8059a6606f64842e7917aeee99159ebd6b8d6261c518d002837be298",
                 "sha256:fa6ba028909cfc64ce9e24bcf22f588b14871980d9787f1e2002c99af8f1850c"
             ],
-            "index": "pypi",
-            "markers": "sys_platform == 'win32'",
             "version": "==228"
         },
         "queuelib": {
@@ -381,6 +389,14 @@
             ],
             "index": "pypi",
             "version": "==0.9.0"
+        },
+        "scrapy-wayback-middleware": {
+            "hashes": [
+                "sha256:37b28fdf8ae58c5a4b140be22999f0ca258d903d0179905fab03640b6f1fc167",
+                "sha256:f0d1018604584cd8711fe2f5920eb054623701b6275038b6c781d358205bdafa"
+            ],
+            "index": "pypi",
+            "version": "==0.3.1"
         },
         "service-identity": {
             "hashes": [
@@ -543,14 +559,6 @@
                 "sha256:e5f92f89355a67de0595932a6c6c02ab4afddc6fcdc0bfc5becd0d60884d3f69"
             ],
             "version": "==1.0.1"
-        },
-        "isort": {
-            "hashes": [
-                "sha256:5196bd2f5b23dc91215734b1c96c6d28390061d69860a948094c12635d6d64e6",
-                "sha256:ba83762132a8661d3525f87a86549712fb7d8da79eeb452e01f327ada9e87920"
-            ],
-            "index": "pypi",
-            "version": "==5.3.2"
         },
         "more-itertools": {
             "hashes": [

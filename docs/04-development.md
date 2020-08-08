@@ -10,8 +10,7 @@ Follow the following directions for cloning the repository and installing requir
 ## Prerequisites
 - [Git](https://git-scm.com/downloads) installed
 - [GitHub](https://github.com/) account
-- [Python](https://www.python.org/downloads/) 3.5, 3.6, or 3.7 
-    - Due to a library dependency we don't yet support Python 3.8. If you are unsure of the version of Python you are using, use the command "python3 --version" to determine your version number.
+- [Python](https://www.python.org/downloads/) 3.6, 3.7, or 3.8.
 - Virtual environment manager (pipenv, virtualenv, virtualenv-wrapper, etc.). [Pipenv](https://pipenv.readthedocs.io/en/latest/#install-pipenv-today) is the most popular option here.
 
 You can find more details on setting up these tools and other common issues in [Setup Help](setuphelp.md).
@@ -146,7 +145,7 @@ git merge upstream/master
 
 Now that we're all in sync, create a new branch in your fork:
 ```bash
-git checkout -b XXXX-spider-NAMEOFAGENCY
+git checkout -b NAMEOFAGENCY-spider
 ```
 
 XXX is the zero-padded issue number and NAMEOFAGENCY should be something like alle_county.
