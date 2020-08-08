@@ -7,11 +7,13 @@ from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
 from scrapy.utils.response import get_base_url
 
-RE_URL = re.compile(r'(?P<date>(\d{1,2}-\d{1,2}-\d{1,2}))-(?P<dtype>(\w+)).aspx')
+RE_URL = re.compile(r"(?P<date>(\d{1,2}-\d{1,2}-\d{1,2}))-(?P<dtype>(\w+)).aspx")
 
 
 def construct_dt(date_str, time_str):
-    return datetime.datetime.strptime('{} {}'.format(date_str, time_str), '%B %d, %Y %I:%M %p')
+    return datetime.datetime.strptime(
+        "{} {}".format(date_str, time_str), "%B %d, %Y %I:%M %p"
+    )
 
 
 class AlleImprovementsSpider(CityScrapersSpider):
@@ -77,13 +79,17 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
     def _parse_dates(self, data):
         """Helper to extract list of meeting dates"""
-        raw = data.xpath(".//td[contains(., 'Schedule')]/following-sibling::td//p/text()").extract()
-        return [' '.join(r.strip().split()) for r in raw if r.strip()]
+        raw = data.xpath(
+            ".//td[contains(., 'Schedule')]/following-sibling::td//p/text()"
+        ).extract()
+        return [" ".join(r.strip().split()) for r in raw if r.strip()]
 
     def _parse_start_time(self, data):
         """Helper to extract time str of meeting"""
-        tmp = data.xpath(".//td[contains(., 'Time')]/following-sibling::td/text()").extract_first()
-        return ' '.join(tmp.split())
+        tmp = data.xpath(
+            ".//td[contains(., 'Time')]/following-sibling::td/text()"
+        ).extract_first()
+        return " ".join(tmp.split())
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
@@ -100,12 +106,14 @@ class AlleImprovementsSpider(CityScrapersSpider):
     def _parse_location(self, item):
         """Parse or generate location."""
         raw = [
-            r.strip() for r in
-            item.xpath(".//td[contains(., 'Location')]/following-sibling::td/text()").extract()
+            r.strip()
+            for r in item.xpath(
+                ".//td[contains(., 'Location')]/following-sibling::td/text()"
+            ).extract()
         ]
 
         return {
-            "address": '\n'.join(raw[1:]),
+            "address": "\n".join(raw[1:]),
             "name": raw[0],
         }
 
@@ -123,24 +131,24 @@ class AlleImprovementsSpider(CityScrapersSpider):
         minutes = {}
 
         for url in urls:
-            tmp = url.split('/')[-1]
+            tmp = url.split("/")[-1]
 
             try:
                 parsed = RE_URL.search(tmp).groupdict()
             except Exception:
                 continue
 
-            dtype = parsed.get('dtype')
-            date = parsed.get('date')
+            dtype = parsed.get("dtype")
+            date = parsed.get("date")
 
             if dtype is None or date is None:
                 continue
 
             full_url = urljoin(get_base_url(response), url)
 
-            if dtype == 'minutes':
+            if dtype == "minutes":
                 minutes[date] = full_url
-            elif dtype == 'agenda':
+            elif dtype == "agenda":
                 agendas[date] = full_url
 
         return agendas, minutes
@@ -148,7 +156,7 @@ class AlleImprovementsSpider(CityScrapersSpider):
     def _parse_links(self, date_str, agenda_links, minute_links):
         links = []
 
-        dsx = datetime.datetime.strptime(date_str, "%B %d, %Y").strftime('%m-%d-%y')
+        dsx = datetime.datetime.strptime(date_str, "%B %d, %Y").strftime("%m-%d-%y")
 
         if dsx in agenda_links:
             links.append({"href": agenda_links[dsx], "title": "Agenda {}".format(dsx)})

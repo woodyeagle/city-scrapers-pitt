@@ -13,7 +13,7 @@ test_response = file_response(
     url=(
         "https://www.county.allegheny.pa.us/economic-development/"
         "authorities/meetings-reports/aim/meetings.aspx"
-    )
+    ),
 )
 spider = AlleImprovementsSpider()
 
@@ -64,7 +64,7 @@ def test_time_notes():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "One Chatham Center",
-        "address": "Suite 900\n112 Washington Place\nPittsburgh, PA 15219"
+        "address": "Suite 900\n112 Washington Place\nPittsburgh, PA 15219",
     }
 
 
@@ -86,14 +86,14 @@ def test_links():
                 "https://www.county.allegheny.pa.us/economic-development/"
                 "authorities/meetings-reports/aim/2019/02-26-19-agenda.aspx"
             ),
-            "title": "Agenda 02-26-19"
+            "title": "Agenda 02-26-19",
         },
         {
             "href": (
                 "https://www.county.allegheny.pa.us/economic-development/"
                 "authorities/meetings-reports/aim/2019/02-26-19-minutes.aspx"
             ),
-            "title": "Minutes 02-26-19"
+            "title": "Minutes 02-26-19",
         },
     ]
 

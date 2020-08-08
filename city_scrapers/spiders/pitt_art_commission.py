@@ -75,7 +75,9 @@ class PittArtCommissionSpider(CityScrapersSpider):
         Note that we currently use a fixed start time, since this information is not available
         from the webpage, save through looking at PDF downloads.
         """
-        return datetime.combine(datetime.strptime(date_str, "%m/%d/%Y"), self.default_start_time)
+        return datetime.combine(
+            datetime.strptime(date_str, "%m/%d/%Y"), self.default_start_time
+        )
 
     def _parse_end(self, row):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
@@ -101,10 +103,13 @@ class PittArtCommissionSpider(CityScrapersSpider):
         }
 
     def _parse_links(self, table_row):
-        return [{
-            "href": link.xpath(".//@href").get(),
-            "title": link.xpath(".//text()").get()
-        } for link in table_row.xpath(".//a")]
+        return [
+            {
+                "href": link.xpath(".//@href").get(),
+                "title": link.xpath(".//text()").get(),
+            }
+            for link in table_row.xpath(".//a")
+        ]
 
     def _parse_source(self, response):
         """Parse or generate source."""

@@ -41,7 +41,9 @@ def test_time_notes():
 
 
 def test_id():
-    assert parsed_items[0]["id"] == "pitt_city_council/201902271000/x/standing_committee"
+    assert (
+        parsed_items[0]["id"] == "pitt_city_council/201902271000/x/standing_committee"
+    )
 
 
 def test_status():
@@ -53,7 +55,7 @@ def test_location():
         "location": "Council Chambers, 5th Floor",
         "address": "414 Grant Street, Pittsburgh, PA 15219",
         "name": "",
-        "neighborhood": ""
+        "neighborhood": "",
     }
 
 
@@ -66,13 +68,15 @@ def test_source():
 
 
 def test_links():
-    assert parsed_items[2]["links"] == [{
-        "href": (
-            "https://pittsburgh.legistar.com/View.ashx?M="
-            "A&ID=681276&GUID=78186660-60BC-459B-86C7-B97156416708"
-        ),
-        "title": "Agenda"
-    }]
+    assert parsed_items[2]["links"] == [
+        {
+            "href": (
+                "https://pittsburgh.legistar.com/View.ashx?M="
+                "A&ID=681276&GUID=78186660-60BC-459B-86C7-B97156416708"
+            ),
+            "title": "Agenda",
+        }
+    ]
 
 
 def test_classification():

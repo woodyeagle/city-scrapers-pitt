@@ -12,7 +12,7 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
     timezone = "America/New_York"
     allowed_domains = ["www.ahs.dep.pa.gov"]
     start_urls = ["http://www.ahs.dep.pa.gov/CalendarOfEvents/Default.aspx?list=true"]
-    custom_settings = {'ROBOTSTXT_OBEY': False}
+    custom_settings = {"ROBOTSTXT_OBEY": False}
 
     # Things I need to work on currently:
     # Returning a list thing correctly for location
@@ -20,8 +20,10 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
     # Setting up the tests correctly, and making sure they pass
 
     def parse(self, response):
-        for meetingChunk in response.xpath('//div[@class = "centered_div padtop"]').getall():
-            if '<strong>' in meetingChunk:
+        for meetingChunk in response.xpath(
+            '//div[@class = "centered_div padtop"]'
+        ).getall():
+            if "<strong>" in meetingChunk:
                 meeting = Meeting(
                     title=self._parse_title(meetingChunk),
                     description=self._parse_description(meetingChunk),
@@ -41,7 +43,7 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
                 yield meeting
 
     def _parse_title(self, item):
-        titleRegex = re.compile(r'(am|pm) : (.)+</td>')
+        titleRegex = re.compile(r"(am|pm) : (.)+</td>")
         thisThing = titleRegex.search(item)
         return thisThing.group()[5:-5]
 
@@ -49,18 +51,18 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
         return None
 
     def _parse_description(self, item):
-        descriptionRegex = re.compile(r'Description:(.)+')
+        descriptionRegex = re.compile(r"Description:(.)+")
         thisThing = descriptionRegex.search(item)
         return thisThing.group()[97:-5]
 
     def _parse_location(self, item):
-        descriptionRegex = re.compile('Location:</td>.*?</td>', re.DOTALL)
+        descriptionRegex = re.compile("Location:</td>.*?</td>", re.DOTALL)
         thisThing = descriptionRegex.search(item)
-        cleanString = thisThing.group()[91:].replace('\n', ' ')
+        cleanString = thisThing.group()[91:].replace("\n", " ")
         return {"name": "Untitled", "address": cleanString[:-5]}
 
     def _parse_links(self, item):
-        linkRegex = re.compile(r'Web address(.)+.aspx(\w)*(\'|\")')
+        linkRegex = re.compile(r"Web address(.)+.aspx(\w)*(\'|\")")
         linkThing = linkRegex.search(item)
         if linkThing is not None:
             linkThing = linkRegex.search(item)
@@ -68,11 +70,11 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
         return None
 
     def _parse_end(self, item):
-        pmRegex = re.compile(r'to (\d)+:\d\d')
+        pmRegex = re.compile(r"to (\d)+:\d\d")
         pmThing = pmRegex.search(item)
 
         if pmThing is not None:
-            dateRegex = re.compile(r'(\d)+/(\d)+/\d\d\d\d')
+            dateRegex = re.compile(r"(\d)+/(\d)+/\d\d\d\d")
             dateThing = dateRegex.search(item)
             ds = dateThing.group().split("/")
 
@@ -83,28 +85,30 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
             if int(pmSplit[1]) > 0:
                 minutes = int(pmSplit[1])
 
-            twelveHourRegex = re.compile(r'to (\d)+:\d\d [a-z][a-z]')
+            twelveHourRegex = re.compile(r"to (\d)+:\d\d [a-z][a-z]")
             twelveHourThing = twelveHourRegex.search(item)
 
             if twelveHourThing.group()[-2:] == "pm":
                 if pmSplit[0] != 12:
                     pmSplit[0] += 12
 
-            return datetime.datetime(int(ds[2]), int(ds[0]), int(ds[1]), pmSplit[0], minutes)
+            return datetime.datetime(
+                int(ds[2]), int(ds[0]), int(ds[1]), pmSplit[0], minutes
+            )
 
         return None
 
     def _parse_start(self, item):
-        dateRegex = re.compile(r'(\d)+/(\d)+/\d\d\d\d')
+        dateRegex = re.compile(r"(\d)+/(\d)+/\d\d\d\d")
         dateThing = dateRegex.search(item)
         ds = dateThing.group().split("/")
 
-        amRegex = re.compile(r'(\d)+:\d\d')
+        amRegex = re.compile(r"(\d)+:\d\d")
         amThing = amRegex.search(item)
         amSplit = amThing.group().split(":")
         amSplit[0] = int(amSplit[0])
 
-        twelveHourRegex = re.compile(r':\d\d [a-z][a-z]')
+        twelveHourRegex = re.compile(r":\d\d [a-z][a-z]")
         twelveHourThing = twelveHourRegex.search(item)
 
         minutes = 0
@@ -116,7 +120,9 @@ class PaDeptEnvironmentalProtectionSpider(CityScrapersSpider):
             if amSplit[0] != 12:
                 amSplit[0] += 12
 
-        return datetime.datetime(int(ds[2]), int(ds[0]), int(ds[1]), amSplit[0], minutes)
+        return datetime.datetime(
+            int(ds[2]), int(ds[0]), int(ds[1]), amSplit[0], minutes
+        )
 
     def _parse_classification(self, item):
         return NOT_CLASSIFIED

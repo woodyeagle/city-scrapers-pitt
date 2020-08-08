@@ -39,7 +39,7 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Lower Level Conference Room",
-        "address": "412 Boulevard of the Allies, Pittsburgh, PA 15219"
+        "address": "412 Boulevard of the Allies, Pittsburgh, PA 15219",
     }
 
 
@@ -60,7 +60,7 @@ def test_links():
     ref = ref + "ETING%20NOTICE.pdf"
     assert parsed_items[0]["links"][0] == {
         "href": ref,
-        "title": "Notice of Rescheduled Board Meeting - January 16, 2020"
+        "title": "Notice of Rescheduled Board Meeting - January 16, 2020",
     }
 
 

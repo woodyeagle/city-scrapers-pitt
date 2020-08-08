@@ -10,7 +10,8 @@ DEBUG_MODE = False
 # hard code them in.
 # It was elsewhere in the page in a paragraph
 DEFAULT_LOCATION = [
-    "Pittsburgh International Airport", "Conference Room A, 4th Flr Mezzanine, Landside Terminal"
+    "Pittsburgh International Airport",
+    "Conference Room A, 4th Flr Mezzanine, Landside Terminal",
 ]
 DEFAULT_TIME = [11, 30, 0]
 TITLE = "Allegheny County Airport Authority Board Meeting"
@@ -102,8 +103,8 @@ class AlleAirportSpider(CityScrapersSpider):
     # Function to strip HTML tags from string
     # https://stackoverflow.com/questions/3398852/using-python-remove-html-tags-formatting-from-a-string
     def striphtml(self, data):
-        p = re.compile(r'<.*?>')
-        return p.sub('', data)
+        p = re.compile(r"<.*?>")
+        return p.sub("", data)
 
     # Function to remove a list of substrings from a string
     def removeStrings(self, string, remList):
@@ -118,14 +119,24 @@ class AlleAirportSpider(CityScrapersSpider):
     # if a month is in the string
     def getDate(self, string):
         month_lst = [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
-            'October', 'November', 'December'
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
         ]
         for i in range(len(month_lst)):
             if month_lst[i].lower() in string.lower():
                 # regex to remove all non-numeric chars from string
                 # leaving the day in month of eveny
-                day = re.sub('[^0-9]', '', string)
+                day = re.sub("[^0-9]", "", string)
                 if day == "":
                     return None
                 # index + 1 is calandar month
@@ -144,7 +155,9 @@ class AlleAirportSpider(CityScrapersSpider):
                 return None
         # This section deals with the way alt locations are listed
         information = appointment.split("–")
-        information = [self.removeStrings(i, ["*", "(", ")"]).strip() for i in information]
+        information = [
+            self.removeStrings(i, ["*", "(", ")"]).strip() for i in information
+        ]
         location = [information[1], ""]
         return location
 
@@ -153,7 +166,7 @@ class AlleAirportSpider(CityScrapersSpider):
         datesString = ""
         # This section handles finding the board meeting dates section of html
         # on the pgh airport website.
-        for val in response.css('strong').getall():
+        for val in response.css("strong").getall():
             if "board meeting dates" in val.lower():
                 datesString = val
                 break
@@ -171,8 +184,12 @@ class AlleAirportSpider(CityScrapersSpider):
                 dateLocation = []
                 # Creates a date-time event given defaultTime and date.
                 eventDateTime = datetime(
-                    datetime.today().year, date[0], date[1], defaultTime[0], defaultTime[1],
-                    defaultTime[2]
+                    datetime.today().year,
+                    date[0],
+                    date[1],
+                    defaultTime[0],
+                    defaultTime[1],
+                    defaultTime[2],
                 )
                 # If an "*" is present meeting is either moved or cancelled
                 if "*" in newStr:

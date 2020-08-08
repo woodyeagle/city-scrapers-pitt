@@ -9,7 +9,8 @@ from freezegun import freeze_time
 from city_scrapers.spiders.pa_development import PaDevelopmentSpider
 
 test_response = file_response(
-    join(dirname(__file__), "files", "pa_development.json"), url="https://dced.pa.gov/events/"
+    join(dirname(__file__), "files", "pa_development.json"),
+    url="https://dced.pa.gov/events/",
 )
 spider = PaDevelopmentSpider()
 
@@ -52,12 +53,14 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Keystone Building 4th Floor, Conference Room 4 East",
-        "address": "400 North Street, Harrisburg, PA, 17011"
+        "address": "400 North Street, Harrisburg, PA, 17011",
     }
 
 
 def test_source():
-    assert parsed_items[0]["source"] == "https://dced.pa.gov/event/pedfa-board-meeting-2/"
+    assert (
+        parsed_items[0]["source"] == "https://dced.pa.gov/event/pedfa-board-meeting-2/"
+    )
 
 
 def test_links():
