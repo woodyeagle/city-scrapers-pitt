@@ -25,7 +25,7 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         Change the `_parse_id`, `_parse_name`, etc methods to fit your scraping
         needs.
         """
-        json_response = loads(response.body_as_unicode())
+        json_response = loads(response.text)
         token = json_response["Token"]
         # api_server = json_response["ApiServer"]
         api_server = "https://awsapieast1-prod2.schoolwires.com/REST/"
@@ -70,7 +70,7 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         api_function = "CalendarEvents/GetEventDate/1/"
         url = api_gateway + api_function
 
-        meetings = loads(response.body_as_unicode())
+        meetings = loads(response.text)
 
         for item in meetings:
             detail_url = url + str(item["Id"])
@@ -80,7 +80,7 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
             yield meeting
 
     def _parse_detail_api(self, response):
-        item = loads(response.body_as_unicode())
+        item = loads(response.text)
         meeting = Meeting(
             title=self._parse_title(item["Event"]),
             description=self._parse_description(item["Event"]),
