@@ -145,7 +145,7 @@ git merge upstream/master
 
 Now that we're all in sync, create a new branch in your fork:
 ```bash
-git checkout -b XXXX-spider-NAMEOFAGENCY
+git checkout -b NAMEOFAGENCY-spider
 ```
 
 XXX is the zero-padded issue number and NAMEOFAGENCY should be something like alle_county.
