@@ -7,7 +7,7 @@ from city_scrapers_core.utils import file_response
 from freezegun import freeze_time
 
 from city_scrapers.spiders.pitt_public_algorithms_task_force import (
-    PittPublicAlgorithmsTaskForceSpider
+    PittPublicAlgorithmsTaskForceSpider,
 )
 
 test_response = file_response(
@@ -58,7 +58,7 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Homewood-Brushton Branch YMCA\n2nd Floor Conference Room",
-        "address": "7140 Bennett Street\nPittsburgh, PA 15208"
+        "address": "7140 Bennett Street\nPittsburgh, PA 15208",
     }
 
 
@@ -67,10 +67,12 @@ def test_source():
 
 
 def test_links():
-    assert parsed_items[0]["links"] == [{
-        "href": "https://pitt.co1.qualtrics.com/jfe/form/SV_6fiAWakicanFJ9r",
-        "title": "Please RSVP"
-    }]
+    assert parsed_items[0]["links"] == [
+        {
+            "href": "https://pitt.co1.qualtrics.com/jfe/form/SV_6fiAWakicanFJ9r",
+            "title": "Please RSVP",
+        }
+    ]
 
 
 def test_classification():

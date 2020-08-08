@@ -20,7 +20,9 @@ class PittPublicAlgorithmsTaskForceSpider(CityScrapersSpider):
         needs.
         """
         for item in re.findall(
-            '<h3>.+?</p>.+?</p>', response.css("article.field-body").get(), flags=re.DOTALL
+            "<h3>.+?</p>.+?</p>",
+            response.css("article.field-body").get(),
+            flags=re.DOTALL,
         ):
             meeting = Meeting(
                 title=self._parse_title(item),
@@ -50,7 +52,7 @@ class PittPublicAlgorithmsTaskForceSpider(CityScrapersSpider):
         meeting_lines = meeting_info.group(1).split("<br>")
         description = meeting_lines[1]
         if "collaboration" in description:
-            description = re.sub('\n', '', description)
+            description = re.sub("\n", "", description)
             return description
         return ""
 
@@ -80,10 +82,13 @@ class PittPublicAlgorithmsTaskForceSpider(CityScrapersSpider):
         address = ""
         name = ""
         if "PA" in meeting_info:
-            meeting_info = re.sub('\n', '', meeting_info)
+            meeting_info = re.sub("\n", "", meeting_info)
             meeting_lines = meeting_info.split("<br>")
-            address = meeting_lines[len(meeting_lines) - 2] + "\n" + \
-                meeting_lines[len(meeting_lines) - 1]
+            address = (
+                meeting_lines[len(meeting_lines) - 2]
+                + "\n"
+                + meeting_lines[len(meeting_lines) - 1]
+            )
             for linenum in range(1, len(meeting_lines) - 2):
                 if len(meeting_lines[linenum]) < 50:
                     if len(name):
