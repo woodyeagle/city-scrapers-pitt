@@ -20,5 +20,3 @@ pytest = "*"
 pathlib2 = {version = "*",python_version = "< '3.6'"}
 black = "*"
 
-[pipenv]
-allow_prereleases = true
