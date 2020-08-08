@@ -15,10 +15,9 @@ pywin32 = {version = "*",sys_platform = "== 'win32'"}
 [dev-packages]
 freezegun = "*"
 pytest = "*"
-"flake8" = "*"
-isort = "*"
-yapf = "*"
 pathlib2 = {version = "*",python_version = "< '3.6'"}
+black = "*"
+isort = "*"
 
-[scripts]
-style = "yapf --in-place --recursive ./city_scrapers/ ./tests/"
+[pipenv]
+allow_prereleases = true
