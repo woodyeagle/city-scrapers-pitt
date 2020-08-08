@@ -4,19 +4,19 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
 scrapy = "*"
-python-dateutil = "*"
-pytz = "*"
 scrapy-sentry = "*"
-scrapy-wayback-middleware = "*"
-city-scrapers-core = {extras = ["aws"],version = "*"}
 legistar = {git = "https://github.com/opencivicdata/python-legistar-scraper"}
-pypiwin32 = {version = "*", sys_platform = "== 'win32'"}
-
+city-scrapers-core = {extras = ["aws"],version = "*"}
+pywin32 = {version = "*", sys_platform = "== 'win32'"}
+requests = "*"
+scrapy-wayback-middleware = "*"
+esprima = "*"
+icalendar = "*"
+scrapelib = "*"
 [dev-packages]
 freezegun = "*"
 pytest = "*"
 pathlib2 = {version = "*",python_version = "< '3.6'"}
-black = "*"
+black = "==19.10b0"
 
