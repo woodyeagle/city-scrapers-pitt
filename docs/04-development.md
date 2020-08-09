@@ -110,7 +110,7 @@ Congratulations - this means that Scrapy is working and we are ready to contribu
 If you're having any issues at this point, here are some options:
 - Talk to other contributors on [Slack](https://citybureau.slack.com/) or at our [Meetups](https://www.meetup.com/codeforpgh/). It's very likely that someone else has encountered your situation before and can *quickly* point you in the right direction.
 - See if your problem shows up in our [issues](https://github.com/pgh-public-meetings/city-scrapers-pitt/issues) page.
-- [Googling the error message](http://www.meh.ro/wp-content/uploads/2017/01/meh.ro12456.jpg)
+- [Googling the error message](https://miro.medium.com/max/700/1*7P1FchNLHq7fHjCOrY0wPw.png)
 - [StackOverflow](https://stackoverflow.com/)
 
 ## Contribute
