@@ -1,0 +1,23 @@
+name: Check markdown links
+on: 
+  schedule:
+    - cron: '1 6 * * 5'
+
+jobs:
+  linkChecker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Link Checker
+        uses: peter-evans/link-checker@v1
+        with: # TODO we could use something like ls *.md */**/*.md > some_variable to achieve this dynamically 
+          args: --timeout 60 --exclude https://www.agilealliance.org/glossary/tdd/ --document-root README.md CONTRIBUTING.md CODE_OF_CONDUCT.md docs/03-team.md docs/04-development.md docs/08-troubleshooting.md docs/index.md docs/setuphelp.md
+
+      - name: Create Issue From File
+        uses: peter-evans/create-issue-from-file@v2
+        with:
+          title: Link Checker Report
+          content-filepath: ./link-checker/out.md
+          labels: bug, automated issue
