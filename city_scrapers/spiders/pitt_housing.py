@@ -1,10 +1,10 @@
-from city_scrapers_core.constants import NOT_CLASSIFIED, BOARD
+import re
+from datetime import datetime, time
+
+import dateutil
+from city_scrapers_core.constants import BOARD, NOT_CLASSIFIED
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
-import dateutil
-from datetime import time, datetime
-
-import re
 
 
 class PittHousingSpider(CityScrapersSpider):
