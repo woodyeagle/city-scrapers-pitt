@@ -2,7 +2,7 @@ import re
 from datetime import datetime, time
 
 import dateutil
-from city_scrapers_core.constants import BOARD, NOT_CLASSIFIED
+from city_scrapers_core.constants import BOARD
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
 
