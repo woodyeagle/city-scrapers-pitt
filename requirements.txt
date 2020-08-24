@@ -11,4 +11,5 @@ flake8
 isort
 yapf
 pathlib2
+ics
 pywin32 ; sys_platform == 'win32'

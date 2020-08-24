@@ -8,6 +8,20 @@ from city_scrapers_core.spiders import CityScrapersSpider
 
 
 class BethelParkSpider(CityScrapersSpider):
+    """Spider for Bethel Park public meetings.
+
+    This spider retrieves meetings from the Bethel Park website at:
+    http://bethelpark.net
+
+    The site allows one to download an event calendar in various formats.
+    We choose to download the "icalendar" version of the calendar. To do
+    this manually, you can navigate to:
+    https://bethelpark.net/events/
+
+    Then, click on the "Subscribe to filtered calendar", and choose the
+    "Add to other calendar" option.
+    """
+
     name = "bethel_park_public_meetings"
     agency = "Municipality of Bethel Park"
     timezone = "America/New_York"
@@ -28,11 +42,31 @@ class BethelParkSpider(CityScrapersSpider):
     start_urls = ["http://bethelpark.net/?" + urlencode(params)]
 
     def normalize(self, s):
+        """Apply some simple transformations to clean up a string (aka normalize it)
+
+        Specifically:
+        1. Apply unicode normalization to convert byte sequences like \xa0 to spaces.
+        2. Strip extra space from the beginning and end of the string.d
+        3. Strip extra space from each line of text.
+        """
         if not s:
             return None
-        return unicodedata.normalize("NFKD", s).strip()
+        unicode_normalized = unicodedata.normalize("NFKD", s).strip()
+        stripped_lines = [line.strip() for line in unicode_normalized.split("\n")]
+        return "\n".join(stripped_lines)
 
     def parse(self, response):
+        """ Convert the website reponse into Meeting objects
+
+        The Bethel Park website allows you to download their calendar in the icalendar format.
+        This function parses the icalendar file and converts each event into a Meeting.
+
+        Arguments:
+            response: The response from the website. We expect the body of this response to
+                contain icalendar data
+        Return:
+            Yields a meeting object for each event in the calendar
+        """
         raw_calendar = response.body.decode("utf-8")
         ics_calendar = ics.Calendar(raw_calendar)
 
@@ -53,8 +87,7 @@ class BethelParkSpider(CityScrapersSpider):
     def _parse_start(self, event):
         if event.begin:
             return event.begin.datetime
-        else:
-            return None
+        return None
 
     def _parse_end(self, event):
         if event.end:
@@ -65,5 +98,4 @@ class BethelParkSpider(CityScrapersSpider):
                 return None
             else:
                 return event.end.datetime
-        else:
-            return None
+        return None
