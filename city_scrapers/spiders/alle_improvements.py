@@ -1,57 +1,32 @@
-import datetime
-import re
-from urllib.parse import urljoin
-
 from city_scrapers_core.constants import NOT_CLASSIFIED
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
-from scrapy.utils.response import get_base_url
-
-RE_URL = re.compile(r'(?P<date>(\d{1,2}-\d{1,2}-\d{1,2}))-(?P<dtype>(\w+)).aspx')
-
-
-def construct_dt(date_str, time_str):
-    return datetime.datetime.strptime('{} {}'.format(date_str, time_str), '%B %d, %Y %I:%M %p')
 
 
 class AlleImprovementsSpider(CityScrapersSpider):
     name = "alle_improvements"
     agency = "Allegheny County Authority for Improvements in Municipalities (AIM)"
     timezone = "America/New_York"
-    allowed_domains = ["county.allegheny.pa.us"]
-    start_urls = [
-        (
-            "https://www.county.allegheny.pa.us/economic-development/"
-            "authorities/meetings-reports/aim/meetings.aspx"
-        ),
-    ]
+    start_urls = ["https://www.alleghenycounty.us/economic-development/authorities/meetings-reports/aim/meetings.aspx"]
 
     def parse(self, response):
-        data = response.xpath("//table[@dropzone='copy']")
+        """
+        `parse` should always `yield` Meeting items.
 
-        time_str = self._parse_start_time(data)
-        date_strs = self._parse_dates(data)
-        location = self._parse_location(data)
-
-        assert time_str is not None
-
-        agenda_links, minute_links = self._parse_pdf_links(response)
-
-        no_item = None
-
-        for ds in date_strs:
-            start = construct_dt(ds, time_str)
-
+        Change the `_parse_title`, `_parse_start`, etc methods to fit your scraping
+        needs.
+        """
+        for item in response.css(".meetings"):
             meeting = Meeting(
-                title=self._parse_title(no_item),
-                description=self._parse_description(no_item),
-                classification=self._parse_classification(no_item),
-                start=start,
-                end=self._parse_end(no_item),
-                all_day=self._parse_all_day(no_item),
-                time_notes=self._parse_time_notes(no_item),
-                location=location,
-                links=self._parse_links(ds, agenda_links, minute_links),
+                title=self._parse_title(item),
+                description=self._parse_description(item),
+                classification=self._parse_classification(item),
+                start=self._parse_start(item),
+                end=self._parse_end(item),
+                all_day=self._parse_all_day(item),
+                time_notes=self._parse_time_notes(item),
+                location=self._parse_location(item),
+                links=self._parse_links(item),
                 source=self._parse_source(response),
             )
 
@@ -62,10 +37,7 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
     def _parse_title(self, item):
         """Parse or generate meeting title."""
-        return (
-            "Authority For Improvements In Municipalities Board Of Directors "
-            "Regular And Public Hearing"
-        )
+        return ""
 
     def _parse_description(self, item):
         """Parse or generate meeting description."""
@@ -75,15 +47,9 @@ class AlleImprovementsSpider(CityScrapersSpider):
         """Parse or generate classification from allowed options."""
         return NOT_CLASSIFIED
 
-    def _parse_dates(self, data):
-        """Helper to extract list of meeting dates"""
-        raw = data.xpath(".//td[contains(., 'Schedule')]/following-sibling::td//p/text()").extract()
-        return [' '.join(r.strip().split()) for r in raw if r.strip()]
-
-    def _parse_start_time(self, data):
-        """Helper to extract time str of meeting"""
-        tmp = data.xpath(".//td[contains(., 'Time')]/following-sibling::td/text()").extract_first()
-        return ' '.join(tmp.split())
+    def _parse_start(self, item):
+        """Parse start datetime as a naive datetime object."""
+        return None
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
@@ -99,61 +65,15 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
     def _parse_location(self, item):
         """Parse or generate location."""
-        raw = [
-            r.strip() for r in
-            item.xpath(".//td[contains(., 'Location')]/following-sibling::td/text()").extract()
-        ]
-
         return {
-            "address": '\n'.join(raw[1:]),
-            "name": raw[0],
+            "address": "",
+            "name": "",
         }
+
+    def _parse_links(self, item):
+        """Parse or generate links."""
+        return [{"href": "", "title": ""}]
 
     def _parse_source(self, response):
         """Parse or generate source."""
         return response.url
-
-    def _parse_pdf_links(self, response):
-        """Generate dict of (date, link) key values for agenda and minutes"""
-        urls = response.xpath(
-            '//a[contains(@href, "-minutes.aspx") or contains(@href, "-agenda.aspx")]/@href'
-        ).extract()
-
-        agendas = {}
-        minutes = {}
-
-        for url in urls:
-            tmp = url.split('/')[-1]
-
-            try:
-                parsed = RE_URL.search(tmp).groupdict()
-            except Exception:
-                continue
-
-            dtype = parsed.get('dtype')
-            date = parsed.get('date')
-
-            if dtype is None or date is None:
-                continue
-
-            full_url = urljoin(get_base_url(response), url)
-
-            if dtype == 'minutes':
-                minutes[date] = full_url
-            elif dtype == 'agenda':
-                agendas[date] = full_url
-
-        return agendas, minutes
-
-    def _parse_links(self, date_str, agenda_links, minute_links):
-        links = []
-
-        dsx = datetime.datetime.strptime(date_str, "%B %d, %Y").strftime('%m-%d-%y')
-
-        if dsx in agenda_links:
-            links.append({"href": agenda_links[dsx], "title": "Agenda {}".format(dsx)})
-
-        if dsx in minute_links:
-            links.append({"href": minute_links[dsx], "title": "Minutes {}".format(dsx)})
-
-        return links
