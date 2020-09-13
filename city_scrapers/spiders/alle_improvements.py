@@ -1,26 +1,63 @@
-from city_scrapers_core.constants import NOT_CLASSIFIED
+from datetime import datetime  # convert utc time to datetime
+from html.parser import HTMLParser  # clean up HTML
+
+from city_scrapers_core.constants import BOARD
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
+
+
+# Helper class for clean_date
+class MLStripper(HTMLParser):
+    # original author: eloff
+    # source: https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
+    def __init__(self):
+        self.reset()
+        self.strict = False
+        self.convert_charrefs = True
+        self.fed = []
+
+    def handle_data(self, d):
+        self.fed.append(d)
+
+    def get_data(self):
+        return ''.join(self.fed)
+
+
+# Accepts an html string, returns a string without any html tags.
+# For example, clean_date("<h1>foo</h1>") will return just "foo".
+def clean_date(html):
+    # original author: eloff
+    # source: https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
+    s = MLStripper()
+    html = html.replace("\xa0", "")
+    html = html.replace("\r", "")
+    html = html.replace("\n", "")
+    s.feed(html)
+    cleaned = s.get_data()
+    cleaned = cleaned.replace(" ", "")  # Strip whitespace
+    return cleaned
 
 
 class AlleImprovementsSpider(CityScrapersSpider):
     name = "alle_improvements"
     agency = "Allegheny County Authority for Improvements in Municipalities (AIM)"
     timezone = "America/New_York"
-    start_urls = ["https://www.alleghenycounty.us/economic-development/authorities/meetings-reports/aim/meetings.aspx"]
+    start_urls = [
+        (
+            "https://www.alleghenycounty.us/economic-development/"
+            "authorities/meetings-reports/aim/meetings.aspx"
+        ),
+    ]
 
-    def parse(self, response):
-        """
-        `parse` should always `yield` Meeting items.
+    def parse(self, response) -> Meeting:
+        self._check_starting_hour_has_not_changed(response)
+        meeting_dates: list = self._parse_meeting_dates_list(response)
 
-        Change the `_parse_title`, `_parse_start`, etc methods to fit your scraping
-        needs.
-        """
-        for item in response.css(".meetings"):
+        for item in meeting_dates:
             meeting = Meeting(
-                title=self._parse_title(item),
-                description=self._parse_description(item),
-                classification=self._parse_classification(item),
+                title=self._parse_title(),
+                description=self._parse_description(),
+                classification=self._parse_classification(),
                 start=self._parse_start(item),
                 end=self._parse_end(item),
                 all_day=self._parse_all_day(item),
@@ -35,45 +72,55 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
             yield meeting
 
-    def _parse_title(self, item):
-        """Parse or generate meeting title."""
+    def _parse_meeting_dates_list(self, response) -> list:
+        root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]'
+        path: str = root + '/div/div/div/div/div/table/tbody/tr/td[2]/p'
+        dates_list: list = response.xpath(path)[0].get().split('<br>')
+        dates_list = list(map(clean_date, dates_list))
+        return dates_list
+
+    def _parse_title(self) -> str:
+        return f"{self.agency} Board Meeting"
+
+    def _parse_description(self) -> str:
         return ""
 
-    def _parse_description(self, item):
-        """Parse or generate meeting description."""
-        return ""
+    def _parse_classification(self) -> str:
+        return BOARD
 
-    def _parse_classification(self, item):
-        """Parse or generate classification from allowed options."""
-        return NOT_CLASSIFIED
+    def _check_starting_hour_has_not_changed(self, response):
+        expected: str = "All meetings start at 9:30 am"
+        root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]/'
+        path: str = root + 'div/div/div/div/div/table/tbody/tr/td[1]/p[2]/text()'
+        assert (response.xpath(path).get() == expected)
 
-    def _parse_start(self, item):
-        """Parse start datetime as a naive datetime object."""
+    def _parse_start(self, item) -> datetime:
+        date: datetime = datetime.strptime(item, '%B%d,%Y')
+        # Every meeting is assumed to take place at 9:30am
+        # as asserted by _check_starting_hour_has_not_changed
+        date_with_time_of_day: datetime = date.replace(hour=9, minute=30)
+        return date_with_time_of_day
+
+    def _parse_end(self, item) -> datetime:
         return None
 
-    def _parse_end(self, item):
-        """Parse end datetime as a naive datetime object. Added by pipeline if None"""
-        return None
-
-    def _parse_time_notes(self, item):
-        """Parse any additional notes on the timing of the meeting"""
+    def _parse_time_notes(self, item) -> str:
         return ""
 
-    def _parse_all_day(self, item):
-        """Parse or generate all-day status. Defaults to False."""
+    def _parse_all_day(self, item) -> bool:
         return False
 
-    def _parse_location(self, item):
-        """Parse or generate location."""
+    def _parse_location(self, item) -> dict:
         return {
-            "address": "",
-            "name": "",
+            "address": "One Chatham Center, Suite 900, 112 Washington Place, Pittsburgh, PA 15219",
+            "name": "Chatham Center",
         }
 
-    def _parse_links(self, item):
+    def _parse_links(self, item) -> list:
         """Parse or generate links."""
+        # TODO This would be a "nice to have" but is not necessary right now.
         return [{"href": "", "title": ""}]
 
-    def _parse_source(self, response):
+    def _parse_source(self, response) -> str:
         """Parse or generate source."""
         return response.url
