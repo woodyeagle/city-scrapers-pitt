@@ -1,9 +1,12 @@
 name: Cron Build
 
-on:
+on: 
   schedule:
     - cron: "12 6 * * *"
-
+  workflow_dispatch:
+  push:
+    branches:
+      - master
 env:
   CI: true
   PIPENV_VENV_IN_PROJECT: true

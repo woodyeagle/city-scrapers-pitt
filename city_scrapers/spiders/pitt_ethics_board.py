@@ -9,7 +9,7 @@ from city_scrapers_core.spiders import CityScrapersSpider
 class PittEthicsBoardSpider(CityScrapersSpider):
     name = "pitt_ethics_board"
     agency = "Pittsburgh Ethics Hearing Board"
-    timezone = "America/Chicago"
+    timezone = "America/New_York"
     start_urls = ["http://pittsburghpa.gov/ehb/ehb-meetings"]
     LOCATION = {
         "address": "414 Grant St, Pittsburgh, PA 15219",

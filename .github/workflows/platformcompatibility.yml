@@ -1,0 +1,38 @@
+name: CrossPlatformCompatibility
+
+on: [push, pull_request]
+
+env:
+  CI: true
+  PIPENV_VENV_IN_PROJECT: true
+  AUTOTHROTTLE_MAX_DELAY: 30.0
+  AUTOTHROTTLE_START_DELAY: 1.5
+  AUTOTHROTTLE_TARGET_CONCURRENCY: 3.0
+
+jobs:
+  check:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 3
+      matrix:
+        python-version: [3.7]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Pipenv
+      uses: dschep/install-pipenv-action@v1
+
+    - name: Install dependencies
+      run: pipenv sync --dev
+      env:
+        PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+
+    - name: Test Scrapy
+      run: pipenv run scrapy crawl pitt_art_commission
