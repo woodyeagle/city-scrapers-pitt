@@ -71,32 +71,3 @@ Here are some helpful links for setting up Python on your computer:
 [Pipenv](https://pipenv.readthedocs.io/en/latest/) is package management tool for Python which combines managing dependencies and virtual environments. It's also designed to be compatible with Windows. Other tools like `virtualenv` and `virtualenv-wrapper` can be used, but our documentation will only refer to Pipenv since it's quickly being adopted as the standard for Python dependency management.
 
 You can see installation instructions for Pipenv in the [Installing Pipenv](https://pipenv.kennethreitz.org/en/latest/install/#installing-pipenv) section of the documentation.
-
-### Configuring your code editor
-
-Most text editors can be configured to fix code style issues for you based off of the configuration settings in `setup.cfg`. Here's an example for VSCode using the [standard Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) (which can be modified/added at `.vscode/settings.json` in your project directory):
-
-```json
-{
-  "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.envFile": "${workspaceRoot}/.env",
-  "python.linting.flake8Args": ["--config", "${workspaceRoot}/setup.cfg"],
-  "python.formatting.provider": "yapf",
-  "python.formatting.yapfArgs": ["--style", "${workspaceRoot}/setup.cfg"],
-  "python.sortImports.path": "${workspaceRoot}/.venv/bin/isort",
-  "python.sortImports.args": [
-    "--settings-path=${workspaceFolder}/setup.cfg"
-  ],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  },
-  "editor.formatOnSave": true,
-  "editor.rulers": [100]
-}
-```
-
-This configuration will run linting and style checks for you, and also make necessary changes automatically any time you save. Packages are available for [Atom](https://atom.io/packages/linter-flake8) and Sublime Text as well.

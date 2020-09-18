@@ -29,7 +29,9 @@ Uncomment below
 
 
 def test_title():
-    assert parsed_items[0]["title"] == "Allegheny County Airport Authority Board Meeting"
+    assert (
+        parsed_items[0]["title"] == "Allegheny County Airport Authority Board Meeting"
+    )
 
 
 def test_description():
@@ -58,20 +60,23 @@ def test_time_notes():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Pittsburgh International Airport",
-        "address": "Conference Room A, 4th Flr Mezzanine,"
-                   " Landside Terminal"
+        "address": "Conference Room A, 4th Flr Mezzanine," " Landside Terminal",
     }
 
 
 def test_source():
-    assert parsed_items[0]["source"] == "https://www.flypittsburgh.com/about-us/leadership"
+    assert (
+        parsed_items[0]["source"] == "https://www.flypittsburgh.com/about-us/leadership"
+    )
 
 
 def test_links():
-    assert parsed_items[0]["links"] == [{
-        "href": "https://www.flypittsburgh.com/about-us/leadership",
-        "title": "Leadership - Pittsburgh International Airport"
-    }]
+    assert parsed_items[0]["links"] == [
+        {
+            "href": "https://www.flypittsburgh.com/about-us/leadership",
+            "title": "Leadership - Pittsburgh International Airport",
+        }
+    ]
 
 
 def test_classification():

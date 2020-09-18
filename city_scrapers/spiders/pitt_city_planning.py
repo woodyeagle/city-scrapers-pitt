@@ -17,20 +17,20 @@ class PittCityPlanningSpider(CityScrapersSpider):
         """
         Create list of events
         """
-        everything = response.css('div.col-md-12').extract()[0]
-        title_index = [m.start() for m in re.finditer('<p><strong>', everything)]
+        everything = response.css("div.col-md-12").extract()[0]
+        title_index = [m.start() for m in re.finditer("<p><strong>", everything)]
         events = []
         for i in range(0, len(title_index) - 1):
             start = title_index[i]
             # for the last event, need to make the end point just the end of everything
             if i == len(title_index) - 1:
-                end = len(everything) - len('<p><strong>')
+                end = len(everything) - len("<p><strong>")
             else:
-                end = title_index[i + 1] - len('<p><strong>')
+                end = title_index[i + 1] - len("<p><strong>")
 
             events.append(everything[start:end])
         # replace '\x0' with space
-        events = [i.replace(u'\xa0', u'') for i in events]
+        events = [i.replace(u"\xa0", u"") for i in events]
         return events
 
     def parse(self, response):
@@ -62,7 +62,7 @@ class PittCityPlanningSpider(CityScrapersSpider):
 
     def _parse_title(self, item):
         """Parse or generate meeting title."""
-        title = re.search('<strong>(.*?)</strong>', item).group(1)
+        title = re.search("<strong>(.*?)</strong>", item).group(1)
         return title
 
     def _parse_description(self, item):
@@ -76,30 +76,30 @@ class PittCityPlanningSpider(CityScrapersSpider):
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
         # replace /xao encoding with space in lines where it appears
-        item2 = item.replace(u'\xa0', u' ')
-        date_text = re.search('<li>.*?: (.*?)</li>', item2).group(1)
+        item2 = item.replace(u"\xa0", u" ")
+        date_text = re.search("<li>.*?: (.*?)</li>", item2).group(1)
         # check if the word "at" is in date_text, to see if time is specified
-        date_text = date_text.replace(' at ', ' ')
+        date_text = date_text.replace(" at ", " ")
         # remove commas since those aren't consistently used
-        date_text = date_text.replace(',', '')
+        date_text = date_text.replace(",", "")
         # remove periods
-        date_text = date_text.replace('.', '')
+        date_text = date_text.replace(".", "")
         # remove leading and trailing spaces
         date_text = date_text.strip()
         try:
-            date = datetime.strptime(date_text, '%A %B %d %Y %I:%M %p')
+            date = datetime.strptime(date_text, "%A %B %d %Y %I:%M %p")
         except ValueError:
             try:
-                date = datetime.strptime(date_text, '%A %B %d %Y %I %p')
+                date = datetime.strptime(date_text, "%A %B %d %Y %I %p")
             except ValueError:
                 try:
-                    date = datetime.strptime(date_text, '%B %d %Y %I %p')
+                    date = datetime.strptime(date_text, "%B %d %Y %I %p")
                 except ValueError:
                     try:
-                        date = datetime.strptime(date_text, '%A %B %d %Y')
+                        date = datetime.strptime(date_text, "%A %B %d %Y")
                     except ValueError:
                         try:
-                            date = datetime.strptime(date_text, '%A %B %d %Y %I:%M %p')
+                            date = datetime.strptime(date_text, "%A %B %d %Y %I:%M %p")
                         except ValueError:
                             date = datetime(1111, 11, 11, 11, 11)
         return date
@@ -118,20 +118,20 @@ class PittCityPlanningSpider(CityScrapersSpider):
 
     def _parse_location(self, item):
         """Parse or generate location."""
-        e2 = item[re.search('<li>(.*?)</li>', item).end():]
-        loc = re.search('<li>(.*?)</li>', e2).group(1)
+        e2 = item[re.search("<li>(.*?)</li>", item).end() :]
+        loc = re.search("<li>(.*?)</li>", e2).group(1)
         """test if the location starts with a number"""
         if bool(re.search("^[0-9]", loc)):
             location_name = ""
             address = loc
         else:
-            location_name = re.search('^(.+?),', loc).group(1)
-            address = re.search('^' + location_name + ', ' + '(.*?)$', loc).group(1)
+            location_name = re.search("^(.+?),", loc).group(1)
+            address = re.search("^" + location_name + ", " + "(.*?)$", loc).group(1)
         location = {"name": location_name, "address": address}
         return location
 
     def _parse_links(self, item):
-        e2 = item[re.search('<li>(.*?)</li>', item).end():]
+        e2 = item[re.search("<li>(.*?)</li>", item).end() :]
         href = re.findall('href="(.*?)"', e2)
         title = re.findall('"_blank">(.*?)</a>', e2)
         links = []

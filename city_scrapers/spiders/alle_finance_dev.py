@@ -11,7 +11,10 @@ class AlleFinanceDevSpider(CityScrapersSpider):
     agency = "Allegheny County Finance and Development Commission"
     timezone = "America/New_York"
     root_url = "https://alleghenycounty.us"
-    start_urls = [root_url + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"]
+    start_urls = [
+        root_url
+        + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
+    ]
     TIME = "9:30 am"
     ADDRESS = "112 Washington Place, Pittsburgh, PA 15219"
     NAME = "One Chatham Center, Suite 900"
@@ -20,35 +23,36 @@ class AlleFinanceDevSpider(CityScrapersSpider):
     def parse(self, response):
         # Check that the time has not changed:
         time_info = response.xpath(
-            '/html/body/form/div[3]/div[3]/section' +
-            '/div[1]/div[2]/div/div/div/div/table/tbody/tr[1]/td[2]'
+            "/html/body/form/div[3]/div[3]/section"
+            + "/div[1]/div[2]/div/div/div/div/table/tbody/tr[1]/td[2]"
         ).get()
         if self.TIME not in time_info.lower():
             raise ValueError("Time has changed.")
 
         # Check that the location has not changed:
         location_info = response.xpath(
-            '/html/body/form/div[3]/div[3]' +
-            '/section/div[1]/div[2]/div/div/div/div/table/tbody/tr[2]/td[2]'
+            "/html/body/form/div[3]/div[3]"
+            + "/section/div[1]/div[2]/div/div/div/div/table/tbody/tr[2]/td[2]"
         ).get()
         if self.ADDRESS_PATTERN not in location_info.lower():
             raise ValueError("Meeting location has changed.")
 
         # Get the list of meeting dates:
         meeting_soup = response.xpath(
-            '/html/body/form/div[3]/div[3]/section' +
-            '/div[1]/div[2]/div/div/div/div/table/tbody/tr[3]/td[2]'
+            "/html/body/form/div[3]/div[3]/section"
+            + "/div[1]/div[2]/div/div/div/div/table/tbody/tr[3]/td[2]"
         ).get()
         # Clean up the list of meeting dates:
-        meeting_soup = re.sub('\r', '', meeting_soup)
-        meeting_soup = re.sub('\n', '', meeting_soup)
-        meeting_soup = re.sub('\xa0', '', meeting_soup)
-        meeting_soup = re.sub('</p>', '', meeting_soup)
+        meeting_soup = re.sub("\r", "", meeting_soup)
+        meeting_soup = re.sub("\n", "", meeting_soup)
+        meeting_soup = re.sub("\xa0", "", meeting_soup)
+        meeting_soup = re.sub("</p>", "", meeting_soup)
         meeting_soup = meeting_soup.lower()
-        meetings = meeting_soup.split('<p><p>')[1:]
+        meetings = meeting_soup.split("<p><p>")[1:]
         pattern = (
-            u'(january|february|march|april|may|june|' +
-            'july|august|september|october|december) ' + '(\\d*),( )*(\\d\\d\\d\\d)'
+            u"(january|february|march|april|may|june|"
+            + "july|august|september|october|december) "
+            + "(\\d*),( )*(\\d\\d\\d\\d)"
         )
         meetings = re.findall(pattern, meeting_soup)
 
@@ -85,7 +89,9 @@ class AlleFinanceDevSpider(CityScrapersSpider):
 
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
-        return dateutil.parser.parse(item[0] + ' ' + item[1] + ' ' + item[-1] + ' ' + self.TIME)
+        return dateutil.parser.parse(
+            item[0] + " " + item[1] + " " + item[-1] + " " + self.TIME
+        )
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
