@@ -37,7 +37,7 @@ class BethelParkSpider(CityScrapersSpider):
         "controller": "ai1ec_exporter_controller",
         "action": "export_events",
         "ai1ec_cat_ids": "42",
-        "no_html": "true"
+        "no_html": "true",
     }
     start_urls = ["http://bethelpark.net/?" + urlencode(params)]
 

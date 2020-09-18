@@ -15,7 +15,7 @@ test_response = file_response(
     "&controller=ai1ec_exporter_controller"
     "&action=export_events"
     "&ai1ec_cat_ids=42"
-    "&no_html=true"
+    "&no_html=true",
 )
 spider = BethelParkSpider()
 
@@ -39,13 +39,15 @@ def test_event_count():
 
 def test_titles():
     expected_titles = [
-        "Council Committee Meeting", "Shade Tree Commission Meeting",
-        "Shade Tree Commission Meeting", "Zoning Hearing Board",
+        "Council Committee Meeting",
+        "Shade Tree Commission Meeting",
+        "Shade Tree Commission Meeting",
+        "Zoning Hearing Board",
         "Planning & Zoning Commission Workshop Meeting",
         (
             "Municipal Council Committee Meeting July 27th, 2020 7:30 PM "
             "– Public Hearings starting at 6:30 PM"
-        )
+        ),
     ]
     for (event, expected_title) in zip(get_test_sample(), expected_titles):
         assert event["title"] == expected_title
@@ -59,7 +61,7 @@ def test_start():
         datetime(year=2020, month=9, day=16, hour=18, minute=30, tzinfo=tzinfo),
         datetime(year=2020, month=9, day=8, hour=19, minute=30, tzinfo=tzinfo),
         datetime(year=2020, month=7, day=29, hour=19, minute=00, tzinfo=tzinfo),
-        datetime(year=2020, month=7, day=27, hour=18, minute=30, tzinfo=tzinfo)
+        datetime(year=2020, month=7, day=27, hour=18, minute=30, tzinfo=tzinfo),
     ]
     for (event, expected_start) in zip(get_test_sample(), expected_start_dates):
         assert event["start"].year == expected_start.year
@@ -77,8 +79,12 @@ def test_end():
     # six event has a different end date set, in this specific data set.
     tzinfo = tz.gettz("America/New_York")
     expected_end_dates = [
-        None, None, None, None, None,
-        datetime(year=2020, month=7, day=27, hour=21, minute=00, tzinfo=tzinfo)
+        None,
+        None,
+        None,
+        None,
+        None,
+        datetime(year=2020, month=7, day=27, hour=21, minute=00, tzinfo=tzinfo),
     ]
     for (event, expected_end) in zip(get_test_sample(), expected_end_dates):
         if expected_end is None:
@@ -95,14 +101,16 @@ def test_end():
 def test_location():
     expected_locations = [
         "Council Caucus Room @ 5100 West Library Ave. Bethel Park, PA 15102",
-        ("Municipal Building Council Chambers "
-         "@ 5100 West Library Ave Bethel Park, PA 15102"),
+        (
+            "Municipal Building Council Chambers "
+            "@ 5100 West Library Ave Bethel Park, PA 15102"
+        ),
         # Note there are slight variations in how the locations are reported,
         # e.g. missing a comma in this case
         "Municipal Building Council Chambers @ 5100 West Library Ave Bethel Park PA 15102",
         "5100 West Library Ave. Bethel Park, PA 15102 @ Council Chambers",
         "5100 West Library Ave. Bethel Park, PA 15102 @ Council Chambers",
-        "Municipal Building Council Chambers @ 5100 West Library Road"
+        "Municipal Building Council Chambers @ 5100 West Library Road",
     ]
     for (event, expected_location) in zip(get_test_sample(), expected_locations):
         assert event["location"] == expected_location
@@ -135,7 +143,7 @@ def test_description():
         "Meeting Agenda",
         # This meeting has a very length description that we store in a file to keep this
         # test class a little neater
-        long_description
+        long_description,
     ]
     for (event, expected_description) in zip(get_test_sample(), expected_descriptions):
         assert event["description"] == expected_description
