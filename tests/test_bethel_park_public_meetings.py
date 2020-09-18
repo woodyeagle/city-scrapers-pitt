@@ -11,11 +11,11 @@ from city_scrapers.spiders.bethel_park_public_meetings import BethelParkSpider
 test_response = file_response(
     join(dirname(__file__), "files", "bethel_park", "bethel_park_public_meetings.ics"),
     url="http://bethelpark.net/?"
-        "plugin=all-in-one-event-calendar"
-        "&controller=ai1ec_exporter_controller"
-        "&action=export_events"
-        "&ai1ec_cat_ids=42"
-        "&no_html=true"
+    "plugin=all-in-one-event-calendar"
+    "&controller=ai1ec_exporter_controller"
+    "&action=export_events"
+    "&ai1ec_cat_ids=42"
+    "&no_html=true"
 )
 spider = BethelParkSpider()
 
@@ -42,8 +42,10 @@ def test_titles():
         "Council Committee Meeting", "Shade Tree Commission Meeting",
         "Shade Tree Commission Meeting", "Zoning Hearing Board",
         "Planning & Zoning Commission Workshop Meeting",
-        ("Municipal Council Committee Meeting July 27th, 2020 7:30 PM "
-         "– Public Hearings starting at 6:30 PM")
+        (
+            "Municipal Council Committee Meeting July 27th, 2020 7:30 PM "
+            "– Public Hearings starting at 6:30 PM"
+        )
     ]
     for (event, expected_title) in zip(get_test_sample(), expected_titles):
         assert event["title"] == expected_title
