@@ -11,8 +11,7 @@ root = "https://www.alleghenycounty.us/"
 path = root + "economic-development/authorities/meetings-reports/aim/meetings.aspx"
 
 test_response = file_response(
-    join(dirname(__file__), "files", "alle_improvements.html"),
-    url=path,
+    join(dirname(__file__), "files", "alle_improvements.html"), url=path,
 )
 spider = AlleImprovementsSpider()
 
@@ -59,7 +58,7 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Chatham Center",
-        "address": "One Chatham Center, Suite 900, 112 Washington Place, Pittsburgh, PA 15219"
+        "address": "One Chatham Center, Suite 900, 112 Washington Place, Pittsburgh, PA 15219",
     }
 
 

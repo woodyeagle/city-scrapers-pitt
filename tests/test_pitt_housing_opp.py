@@ -26,7 +26,7 @@ def test_title():
 
 
 def test_description():
-    test_string = 'The Housing Opportunity Fund (HOF) was '
+    test_string = "The Housing Opportunity Fund (HOF) was "
     assert test_string in parsed_items[0]["description"]
 
 
@@ -54,16 +54,18 @@ def test_status():
     assert parsed_items[0]["status"] == "tentative"
 
 
-address = 'City-County Building, Fifth Floor, 414 Grant Street, '
-address += 'Pittsburgh, PA 15219'
-location = {'address': address, 'name': 'City Council Chambers'}
+address = "City-County Building, Fifth Floor, 414 Grant Street, "
+address += "Pittsburgh, PA 15219"
+location = {"address": address, "name": "City Council Chambers"}
 
 
 def test_location():
     assert parsed_items[0]["location"] == location
 
 
-source_url = "https://www.ura.org/events/housing-opportunity-fund-advisory-board-meeting"
+source_url = (
+    "https://www.ura.org/events/housing-opportunity-fund-advisory-board-meeting"
+)
 
 
 # todo this should append the specific date at the
@@ -74,7 +76,7 @@ def test_source():
 
 
 def test_links():
-    assert parsed_items[0]["links"] == [{'href': '', 'title': ''}]
+    assert parsed_items[0]["links"] == [{"href": "", "title": ""}]
 
 
 def test_classification():

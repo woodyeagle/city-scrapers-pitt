@@ -26,8 +26,8 @@ class PittHousingSpider(CityScrapersSpider):
             list_item_text = list_item.xpath(".//text()").get()
             match = self.meeting_row_pattern.match(list_item_text)
             if match:
-                date_str = match.group('date')
-                location_str = match.group('location')
+                date_str = match.group("date")
+                location_str = match.group("location")
                 meeting = Meeting(
                     title=self._parse_title(list_item),
                     description="",
@@ -36,9 +36,9 @@ class PittHousingSpider(CityScrapersSpider):
                     end=None,
                     all_day=False,
                     time_notes="",
-                    location={'address': location_str.strip()},
+                    location={"address": location_str.strip()},
                     links=[],
-                    source=response.url
+                    source=response.url,
                 )
                 yield meeting
 

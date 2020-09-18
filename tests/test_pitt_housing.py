@@ -37,13 +37,11 @@ def test_start():
         datetime(year=2020, month=7, day=23, hour=10, minute=30),
         datetime(year=2020, month=9, day=24, hour=10, minute=30),
         datetime(year=2020, month=10, day=22, hour=10, minute=30),
-        datetime(year=2020, month=12, day=17, hour=10, minute=30)
+        datetime(year=2020, month=12, day=17, hour=10, minute=30),
     }
 
     actual_start_dates_2020 = {
-        meeting["start"]
-        for meeting in parsed_items
-        if meeting["start"].year == 2020
+        meeting["start"] for meeting in parsed_items if meeting["start"].year == 2020
     }
 
     assert expected_start_dates_2020 == actual_start_dates_2020

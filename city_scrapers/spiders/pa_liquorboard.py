@@ -10,6 +10,7 @@ class PaLiquorboardSpider(CityScrapersSpider):
     """Spider is a class that scapy provides to us,
         this spider will inherit properties from the base spider class
     """
+
     name = "pa_liquorboard"  # How we refer to the spider when we want to run it
     agency = "Pennsylvania Liquor Control Board"
     timezone = "America/New_York"
@@ -72,9 +73,9 @@ class PaLiquorboardSpider(CityScrapersSpider):
         """Parse start datetime as a naive datetime object."""
         # Remove garbage from our date item:
         clean_item = item
-        clean_item = re.sub('- ', '', item)
-        clean_item = re.sub('\\xa0', ' ', clean_item)
-        start_time = datetime.strptime(clean_item, '%A, %B %d, %Y')
+        clean_item = re.sub("- ", "", item)
+        clean_item = re.sub("\\xa0", " ", clean_item)
+        start_time = datetime.strptime(clean_item, "%A, %B %d, %Y")
 
         try:
             if self.EXPECTED_START_HOUR in start_hour:
@@ -86,7 +87,11 @@ class PaLiquorboardSpider(CityScrapersSpider):
             return None
 
     def _parse_starting_hour(self, response):
-        raw = response.css('#container > div.content > div > p > span > span').get().upper()
+        raw = (
+            response.css("#container > div.content > div > p > span > span")
+            .get()
+            .upper()
+        )
 
         if self.EXPECTED_START_HOUR in raw:
             found_start_hour = self.EXPECTED_START_HOUR

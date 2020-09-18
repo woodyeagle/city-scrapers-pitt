@@ -20,7 +20,7 @@ class MLStripper(HTMLParser):
         self.fed.append(d)
 
     def get_data(self):
-        return ''.join(self.fed)
+        return "".join(self.fed)
 
 
 # Accepts an html string, returns a string without any html tags.
@@ -74,8 +74,8 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
     def _parse_meeting_dates_list(self, response) -> list:
         root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]'
-        path: str = root + '/div/div/div/div/div/table/tbody/tr/td[2]/p'
-        dates_list: list = response.xpath(path)[0].get().split('<br>')
+        path: str = root + "/div/div/div/div/div/table/tbody/tr/td[2]/p"
+        dates_list: list = response.xpath(path)[0].get().split("<br>")
         dates_list = list(map(clean_date, dates_list))
         return dates_list
 
@@ -91,11 +91,11 @@ class AlleImprovementsSpider(CityScrapersSpider):
     def _check_starting_hour_has_not_changed(self, response):
         expected: str = "All meetings start at 9:30 am"
         root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]/'
-        path: str = root + 'div/div/div/div/div/table/tbody/tr/td[1]/p[2]/text()'
-        assert (response.xpath(path).get() == expected)
+        path: str = root + "div/div/div/div/div/table/tbody/tr/td[1]/p[2]/text()"
+        assert response.xpath(path).get() == expected
 
     def _parse_start(self, item) -> datetime:
-        date: datetime = datetime.strptime(item, '%B%d,%Y')
+        date: datetime = datetime.strptime(item, "%B%d,%Y")
         # Every meeting is assumed to take place at 9:30am
         # as asserted by _check_starting_hour_has_not_changed
         date_with_time_of_day: datetime = date.replace(hour=9, minute=30)

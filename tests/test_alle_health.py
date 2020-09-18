@@ -8,8 +8,8 @@ from city_scrapers.spiders.alle_health import AlleHealthSpider
 
 test_response = file_response(
     join(dirname(__file__), "files", "alle_health.html"),
-    url="https://www.alleghenycounty.us/Health-Department/Resources/" +
-    "About/Board-of-Health/Public-Meeting-Schedule.aspx",
+    url="https://www.alleghenycounty.us/Health-Department/Resources/"
+    + "About/Board-of-Health/Public-Meeting-Schedule.aspx",
 )
 spider = AlleHealthSpider()
 
@@ -30,7 +30,10 @@ Uncomment below
 
 def test_title():
     #     print ("L35: title is |" + str(parsed_items[0]["title"]) + "|")
-    assert parsed_items[0]["title"] == "Allegheny County Board of Health May 1, 2019 12:30 pm"
+    assert (
+        parsed_items[0]["title"]
+        == "Allegheny County Board of Health May 1, 2019 12:30 pm"
+    )
 
 
 # def test_description():

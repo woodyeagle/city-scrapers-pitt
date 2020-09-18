@@ -3,11 +3,12 @@ from os.path import dirname, join
 
 from city_scrapers_core.constants import NOT_CLASSIFIED
 from city_scrapers_core.utils import file_response
+
 # import pytest
 from freezegun import freeze_time
 
 from city_scrapers.spiders.pa_dept_environmental_protection import (
-    PaDeptEnvironmentalProtectionSpider
+    PaDeptEnvironmentalProtectionSpider,
 )
 
 test_response = file_response(
@@ -29,7 +30,10 @@ def test_title():
 
 
 def test_description():
-    assert parsed_items[0]["description"] == "Joint Meeting with Nutrient Management Advisory "
+    assert (
+        parsed_items[0]["description"]
+        == "Joint Meeting with Nutrient Management Advisory "
+    )
 
 
 def test_location():
@@ -38,7 +42,7 @@ def test_location():
         "address": (
             "Pennsylvania Department of Agriculture  "
             "2301 North Cameron Street, Room 309  Harrisburg, PA 17110"
-        )
+        ),
     }
 
 
@@ -56,13 +60,15 @@ def test_source():
 
 
 def test_links():
-    assert parsed_items[1]["links"] == [{
-        "href": (
-            "https://www.dep.pa.gov/PublicParticipation/"
-            "AdvisoryCommittees/WaterAdvisory/SAC/Pages/default.aspx"
-        ),
-        "title": "more info"
-    }]
+    assert parsed_items[1]["links"] == [
+        {
+            "href": (
+                "https://www.dep.pa.gov/PublicParticipation/"
+                "AdvisoryCommittees/WaterAdvisory/SAC/Pages/default.aspx"
+            ),
+            "title": "more info",
+        }
+    ]
 
 
 def test_classification():

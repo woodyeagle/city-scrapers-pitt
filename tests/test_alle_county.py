@@ -51,23 +51,24 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "",
-        "address":
-            "Regular Meeting, Fourth Floor, Gold Room, 436 Grant Street, Pittsburgh, PA 15219"
+        "address": "Regular Meeting, Fourth Floor, Gold Room, 436 Grant Street, Pittsburgh, PA 15219",
     }
 
 
 def test_source():
-    assert parsed_items[0][
-        "source"
-    ] == "https://alleghenycounty.legistar.com/DepartmentDetail.aspx?ID=26127&GUID=0B26890F-A762-408F-A03C-110A9BD4CAD9"  # noqa
+    assert (
+        parsed_items[0]["source"]
+        == "https://alleghenycounty.legistar.com/DepartmentDetail.aspx?ID=26127&GUID=0B26890F-A762-408F-A03C-110A9BD4CAD9"
+    )  # noqa
 
 
 def test_links():
-    assert parsed_items[0]["links"] == [{
-        "href":
-            "https://alleghenycounty.legistar.com/View.ashx?M=A&ID=673968&GUID=2D730472-FA66-4E04-A43B-F169863AD1B7",  # noqa
-        "title": "Agenda"
-    }]
+    assert parsed_items[0]["links"] == [
+        {
+            "href": "https://alleghenycounty.legistar.com/View.ashx?M=A&ID=673968&GUID=2D730472-FA66-4E04-A43B-F169863AD1B7",  # noqa
+            "title": "Agenda",
+        }
+    ]
 
 
 def test_classification():

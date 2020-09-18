@@ -2,6 +2,7 @@ from datetime import datetime
 from os.path import dirname, join
 
 import pytest
+
 # from city_scrapers_core.constants import NOT_CLASSIFIED
 from city_scrapers_core.utils import file_response
 from freezegun import freeze_time
@@ -11,7 +12,9 @@ from city_scrapers.spiders.pa_utility import PaUtilitySpider
 url = "http://www.puc.pa.gov/about_puc/public_meeting_calendar/public_meeting_audio_summaries_.aspx"
 
 spider = PaUtilitySpider()
-test_response = file_response(join(dirname(__file__), "files", "pa_utility.html"), url=url)
+test_response = file_response(
+    join(dirname(__file__), "files", "pa_utility.html"), url=url
+)
 
 freezer = freeze_time("2020-01-16")
 freezer.start()
@@ -26,7 +29,10 @@ def test_number_of_meetings():
 
 
 def test_title():
-    assert parsed_items[0]["title"] == "Pennsylvania Public Utility Commission Public Meetings"
+    assert (
+        parsed_items[0]["title"]
+        == "Pennsylvania Public Utility Commission Public Meetings"
+    )
 
 
 def test_description():

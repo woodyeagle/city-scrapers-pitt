@@ -52,7 +52,7 @@ class PittCityCouncilSpider(LegistarSpider):
         in the location section, italicized.
         """
         try:
-            return item.get('Meeting Location').split('\n')[1].split('--em--')[1]
+            return item.get("Meeting Location").split("\n")[1].split("--em--")[1]
         except IndexError:
             return ""
 
@@ -60,15 +60,15 @@ class PittCityCouncilSpider(LegistarSpider):
         """
         Parse or generate location.
         """
-        location = item.get('Meeting Location').split('\n')[0]
-        address = ''
-        if 'Council Chambers' in location:
-            address = '414 Grant Street, Pittsburgh, PA 15219'
+        location = item.get("Meeting Location").split("\n")[0]
+        address = ""
+        if "Council Chambers" in location:
+            address = "414 Grant Street, Pittsburgh, PA 15219"
         return {
-            'address': address,
-            'location': 'Council Chambers, 5th Floor',
-            'name': '',
-            'neighborhood': ''
+            "address": address,
+            "location": "Council Chambers, 5th Floor",
+            "name": "",
+            "neighborhood": "",
         }
 
     def _parse_classification(self, title):
