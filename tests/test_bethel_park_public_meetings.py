@@ -129,9 +129,11 @@ def test_all_day():
     for item in parsed_items:
         assert item["all_day"] is False
 
+
 def test_meeting_ids():
     for item in parsed_items:
         assert item["id"] is not None
+
 
 def test_description():
     with open(join(dirname(__file__), "files", "bethel_park", "long_description")) as f:
