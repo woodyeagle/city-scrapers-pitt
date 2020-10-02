@@ -113,7 +113,7 @@ def test_location():
         "Municipal Building Council Chambers @ 5100 West Library Road",
     ]
     for (event, expected_location) in zip(get_test_sample(), expected_locations):
-        assert event["location"]["name"] == expected_location
+        assert event["location"]["address"] == expected_location
 
 
 def test_classification():

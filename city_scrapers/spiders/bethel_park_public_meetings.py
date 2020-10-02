@@ -79,7 +79,7 @@ class BethelParkSpider(CityScrapersSpider):
                 end=self._parse_end(event),
                 all_day=False,
                 time_notes=None,
-                location={"name": self.normalize(event.location), "address": ""},
+                location={"address": self.normalize(event.location), "name": ""},
                 links=[],
                 source=event.url,
             )
