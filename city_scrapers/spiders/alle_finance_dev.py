@@ -15,7 +15,7 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         root_url
         + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
     ]
-    TIME = "9:30 am"
+    TIME = "9:30\xa0am"
     ADDRESS = "112 Washington Place, Pittsburgh, PA 15219"
     NAME = "One Chatham Center, Suite 900"
     ADDRESS_PATTERN = "112 washington place"
@@ -24,15 +24,15 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         # Check that the time has not changed:
         time_info = response.xpath(
             "/html/body/form/div[3]/div[3]/section"
-            + "/div[1]/div[2]/div/div/div/div/table/tbody/tr[1]/td[2]"
+            + "/div[1]/div[2]/div/div/div/div/div/table/tbody/tr[1]/td[1]/p[2]/text()"
         ).get()
         if self.TIME not in time_info.lower():
             raise ValueError("Time has changed.")
 
         # Check that the location has not changed:
         location_info = response.xpath(
-            "/html/body/form/div[3]/div[3]"
-            + "/section/div[1]/div[2]/div/div/div/div/table/tbody/tr[2]/td[2]"
+            "/html/body/form/div[3]/div[3]/section"
+            + "/div[1]/div[2]/div/div/div/div/div/table/tbody/tr[1]/td[1]/p[1]/text()[3]"
         ).get()
         if self.ADDRESS_PATTERN not in location_info.lower():
             raise ValueError("Meeting location has changed.")
@@ -40,7 +40,7 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         # Get the list of meeting dates:
         meeting_soup = response.xpath(
             "/html/body/form/div[3]/div[3]/section"
-            + "/div[1]/div[2]/div/div/div/div/table/tbody/tr[3]/td[2]"
+            + "/div[1]/div[2]/div/div/div/div/div/table/tbody/tr[1]/td[2]/p"
         ).get()
         # Clean up the list of meeting dates:
         meeting_soup = re.sub("\r", "", meeting_soup)
@@ -48,10 +48,10 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         meeting_soup = re.sub("\xa0", "", meeting_soup)
         meeting_soup = re.sub("</p>", "", meeting_soup)
         meeting_soup = meeting_soup.lower()
-        meetings = meeting_soup.split("<p><p>")[1:]
+        meetings = meeting_soup.split("<br>")[0:]
         pattern = (
             u"(january|february|march|april|may|june|"
-            + "july|august|september|october|december) "
+            + "july|august|september|october|november|december) "
             + "(\\d*),( )*(\\d\\d\\d\\d)"
         )
         meetings = re.findall(pattern, meeting_soup)
