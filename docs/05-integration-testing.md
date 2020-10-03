@@ -78,5 +78,5 @@ URL returned by `serve.py` (step 3 above):
 ```
 Leave the rest of this config file the same.
 Now, when you launch your frontend (`npm start`),
-you should see the results from you local 
+you should see the results from your local 
 spider run in the calendar view!
