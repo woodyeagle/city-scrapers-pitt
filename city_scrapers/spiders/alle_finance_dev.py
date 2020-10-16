@@ -15,7 +15,7 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         root_url
         + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
     ]
-    TIME = "9:30\xa0am"
+    TIME = "9:30 am"
     ADDRESS = "112 Washington Place, Pittsburgh, PA 15219"
     NAME = "One Chatham Center, Suite 900"
     ADDRESS_PATTERN = "112 washington place"
