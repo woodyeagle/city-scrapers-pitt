@@ -22,12 +22,16 @@ class AlleFinanceDevSpider(CityScrapersSpider):
 
     def parse(self, response):
         # Check that the time has not changed:
-        time_info = response.xpath(
-            "/html/body/form/div[3]/div[3]/section"
-            + "/div[1]/div[2]/div/div/div/div/div/table/tbody/tr[1]/td[1]/p[2]/text()"
-        ).get()
-        if self.TIME not in time_info.lower():
-            raise ValueError("Time has changed.")
+        time_info = (
+            response.xpath(
+                "/html/body/form/div[3]/div[3]/section"
+                + "/div[1]/div[2]/div/div/div/div/div/table/tbody/tr[1]/td[1]/p[2]/text()"
+            )
+            .get()
+            .lower()
+            .replace("\xa0", " ")
+        )
+        assert self.TIME in time_info, f'Time has changed. Found: "{time_info}"'
 
         # Check that the location has not changed:
         location_info = response.xpath(
@@ -50,7 +54,7 @@ class AlleFinanceDevSpider(CityScrapersSpider):
         meeting_soup = meeting_soup.lower()
         meetings = meeting_soup.split("<br>")[0:]
         pattern = (
-            u"(january|february|march|april|may|june|"
+            "(january|february|march|april|may|june|"
             + "july|august|september|october|november|december) "
             + "(\\d*),( )*(\\d\\d\\d\\d)"
         )
