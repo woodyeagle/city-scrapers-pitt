@@ -110,7 +110,7 @@ Congratulations - this means that Scrapy is working and we are ready to contribu
 If you're having any issues at this point, here are some options:
 - Talk to other contributors on [Slack](https://citybureau.slack.com/) or at our [Meetups](https://www.meetup.com/codeforpgh/). It's very likely that someone else has encountered your situation before and can *quickly* point you in the right direction.
 - See if your problem shows up in our [issues](https://github.com/pgh-public-meetings/city-scrapers-pitt/issues) page.
-- [Googling the error message](http://www.meh.ro/wp-content/uploads/2017/01/meh.ro12456.jpg)
+- [Googling the error message](https://miro.medium.com/max/700/1*7P1FchNLHq7fHjCOrY0wPw.png)
 - [StackOverflow](https://stackoverflow.com/)
 
 ## Contribute
@@ -244,15 +244,14 @@ This is normal since you have not written any tests for your new spider and the 
 
 #### 6. Run linting and style-checking tools
 
-We use [`flake8`](http://flake8.pycqa.org/en/latest/), [`isort`](https://isort.readthedocs.io/en/stable/), and [`yapf`](https://github.com/google/yapf) to check that all code is written in the proper style. To run these tools individually, you can run the following commands:
+We use [`isort`](https://isort.readthedocs.io/en/stable/), and [`black`](https://github.com/psf/black) to check that all code is written in the proper style. To run these tools individually, you can run the following commands:
 
 ```bash
-(city-scrapers-pitt)$ flake8
 (city-scrapers-pitt)$ isort
-(city-scrapers-pitt)$ yapf --diff --recursive ./city_scrapers/ ./tests/
+(city-scrapers-pitt)$ black .
 ```
 
-Some of these tests might not pass right now, but they should before you are finished with the spider. For example, flake8 dutifully informs us that pytest is imported but unused in the new test file. Since we have not written any tests with pytest method decorations yet, pytest is not being used, so this warning is to be expected.
+Some of these tests might not pass right now, but they should before you are finished with the spider. 
 
 *Run these commands early and often!* They will help you learn the language and style, discover bugs sooner, and avoid the nasty experience of having to fix dozens of style complaints all at once.
 

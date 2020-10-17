@@ -6,16 +6,38 @@ This document covers some of the issues associated with first-time development e
 
 Please refer to the [installation guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) according to your operating system to install Git.
 
-### Git 101
+### Creating a GitHub account
 
+If you do not have an account already, go to [GitHub](https://github.com) and sign up for an account.
+
+### Git 101 Resources
 For a primer on Git for first-time users, see the [try.github.io](https://try.github.io/levels/1/challenges/1) or watch the [following video](https://www.youtube.com/watch?list=PLyCZ96_3y5LXfPVZkHjhHRuIWhcjvCyQA&v=m_MjzgvVZ28) on how to (1) find an issue, (2) fork the code, (3) edit code, (4) open a pull request.
 
-Once you have forked the code and have begun contribution, [syncing your fork](https://help.github.com/articles/syncing-a-fork/) periodically with the main City Bureau repository will be useful in staying up-to-date with the project.
-
-1. You must first [add a remote link](https://help.github.com/articles/configuring-a-remote-for-a-fork/) from which Git can track the main City Bureau project. The remote URL is `<https://github.com/City-Bureau/city-scrapers.git>`. Conventionally we name this remote source `upstream`. The remote source for your original cloned repository is usually named `origin`.
+### Git status
+By typing the `git status` command, we know if we have succesfully cloned the project, and which branch we are, as well as if there are any new files we've changed that git does not know about. Type this often.
+```shell
+$ git status
+```
+### Adding and committing your changes
+Please commit your changes regularly! 
+To do so, we first stage our changes:
 
 ```shell
-$ git remote add upstream https://github.com/City-Bureau/city-scrapers.git
+$ git add .
+```
+The `.` or period symbol is a wildcard character that grabs all of your files within your currenty directory and below and "stages" them for Git.
+```shell
+$ git commit -m "YOUR COMMIT MESSAGE HERE"
+```
+We then commit our changes with the `-m` flag and our commit message in quotes. Make your commit as descriptive as possible in case you need to go back and find those changes!
+
+### Syncing your Fork
+Once you have forked the code and have begun contribution, [syncing your fork](https://help.github.com/articles/syncing-a-fork/) periodically with the main Pittsburgh Public meetings repository will be useful in staying up-to-date with the project.
+
+1. You must first [add a remote link](https://help.github.com/articles/configuring-a-remote-for-a-fork/) from which Git can track the main City Bureau project. The remote URL is `<https://github.com/pgh-public-meetings/city-scrapers-pitt.git>`. Conventionally we name this remote source `upstream`. The remote source for your original cloned repository is usually named `origin`.
+
+```shell
+$ git remote add upstream https://github.com/pgh-public-meetings/city-scrapers-pitt.git
 ```
 
 You can see your existing remotes as well by running `git remote -v`.
@@ -35,10 +57,6 @@ $ git merge upstream/master
 
 4. The final step is to update your fork on Github with the changes from the original repository by running `git push`.
 
-### Creating a GitHub account
-
-If you do not have an account already, go to [GitHub](https://github.com) and sign up for an account.
-
 ## Python and Pipenv
 
 ### Installing Python
@@ -53,32 +71,3 @@ Here are some helpful links for setting up Python on your computer:
 [Pipenv](https://pipenv.readthedocs.io/en/latest/) is package management tool for Python which combines managing dependencies and virtual environments. It's also designed to be compatible with Windows. Other tools like `virtualenv` and `virtualenv-wrapper` can be used, but our documentation will only refer to Pipenv since it's quickly being adopted as the standard for Python dependency management.
 
 You can see installation instructions for Pipenv in the [Installing Pipenv](https://pipenv.kennethreitz.org/en/latest/install/#installing-pipenv) section of the documentation.
-
-### Configuring your code editor
-
-Most text editors can be configured to fix code style issues for you based off of the configuration settings in `setup.cfg`. Here's an example for VSCode using the [standard Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) (which can be modified/added at `.vscode/settings.json` in your project directory):
-
-```json
-{
-  "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.envFile": "${workspaceRoot}/.env",
-  "python.linting.flake8Args": ["--config", "${workspaceRoot}/setup.cfg"],
-  "python.formatting.provider": "yapf",
-  "python.formatting.yapfArgs": ["--style", "${workspaceRoot}/setup.cfg"],
-  "python.sortImports.path": "${workspaceRoot}/.venv/bin/isort",
-  "python.sortImports.args": [
-    "--settings-path=${workspaceFolder}/setup.cfg"
-  ],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  },
-  "editor.formatOnSave": true,
-  "editor.rulers": [100]
-}
-```
-
-This configuration will run linting and style checks for you, and also make necessary changes automatically any time you save. Packages are available for [Atom](https://atom.io/packages/linter-flake8) and Sublime Text as well.

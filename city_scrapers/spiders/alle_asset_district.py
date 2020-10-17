@@ -35,7 +35,7 @@ class AlleAssetDistrictSpider(CityScrapersSpider):
             location=self._parse_location(response),
             description=self._parse_description(response),
             source=self._parse_source(response),
-            start=self._parse_start(response)
+            start=self._parse_start(response),
         )
         meeting["status"] = self._get_status(meeting)
         meeting["id"] = self._get_id(meeting)
@@ -58,18 +58,18 @@ class AlleAssetDistrictSpider(CityScrapersSpider):
         up_startdate = item.css(".published::text").extract_first().strip()
         p_startdate = datetime.strptime(up_startdate, "%a, %b %d, %Y")
         description = self._parse_description(item)
-        TIME_REGEX = re.compile(r'\d{1,2}:\d{2}[AaPp][Mm]')
+        TIME_REGEX = re.compile(r"\d{1,2}:\d{2}[AaPp][Mm]")
         tm_found = TIME_REGEX.search(description)
         if tm_found:
             up_starttime = tm_found[0]
-            p_starttime = datetime.strptime(up_starttime, '%I:%M%p').time()
+            p_starttime = datetime.strptime(up_starttime, "%I:%M%p").time()
             startdatetime = datetime.combine(p_startdate, p_starttime)
         else:
-            TIME2_REGEX = re.compile(r'\d{1,2}[AaPp][Mm]')
+            TIME2_REGEX = re.compile(r"\d{1,2}[AaPp][Mm]")
             tm_found = TIME2_REGEX.search(description)
             if tm_found:
                 up_starttime = tm_found[0]
-                p_starttime = datetime.strptime(up_starttime, '%I%p').time()
+                p_starttime = datetime.strptime(up_starttime, "%I%p").time()
                 startdatetime = datetime.combine(p_startdate, p_starttime)
             else:
                 startdatetime = p_startdate

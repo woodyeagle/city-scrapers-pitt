@@ -24,38 +24,38 @@ class PghMayorOfficeCommAffSpider(CityScrapersSpider):
         needs.
         """
 
-        username = os.environ['NEXTDOOR_USERNAME']
-        password = os.environ['NEXTDOOR_PASSWORD']
+        username = os.environ["NEXTDOOR_USERNAME"]
+        password = os.environ["NEXTDOOR_PASSWORD"]
 
         data = {
-            'scope': 'openid',
-            'client_id': 'NEXTDOOR-WEB',
-            'grant_type': 'password',
-            'username': username,
-            'password': password,
-            'state': '71da7809-840e-4ef4-86d1-a13e9c0afa40191223'  # not sure what state does
+            "scope": "openid",
+            "client_id": "NEXTDOOR-WEB",
+            "grant_type": "password",
+            "username": username,
+            "password": password,
+            "state": "71da7809-840e-4ef4-86d1-a13e9c0afa40191223",  # not sure what state does
         }
 
         headers = {
-            ':authority': 'auth.nextdoor.com',
-            ':method': 'POST',
-            ':path': '/v2/token',
-            ':scheme': 'https',
-            'accept': 'application/json, text/plain , */*',
-            'accept-encoding': 'gzip, deflate, br',
-            'accept-language': 'en-US,en;q=0.9',
-            'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
-            'origin': 'https://nextdoor.com',
-            'referer': 'https://nextdoor.com/',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-site',
-            'user-agent': (
-                'Mozilla/5.0 (X11; CrOS x86_64 12 607.58.0) '
-                'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.86 Safari/537.36'
+            ":authority": "auth.nextdoor.com",
+            ":method": "POST",
+            ":path": "/v2/token",
+            ":scheme": "https",
+            "accept": "application/json, text/plain , */*",
+            "accept-encoding": "gzip, deflate, br",
+            "accept-language": "en-US,en;q=0.9",
+            "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "origin": "https://nextdoor.com",
+            "referer": "https://nextdoor.com/",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "user-agent": (
+                "Mozilla/5.0 (X11; CrOS x86_64 12 607.58.0) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.86 Safari/537.36"
             ),
-            'device-fp': 'v1419700a0150af69fde242c19b64f916c',  # device fingerprint
+            "device-fp": "v1419700a0150af69fde242c19b64f916c",  # device fingerprint
             # (unfortunatly device-fp is needed)
-            'device-id': 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaaaaaaaa'  # obviously faked
+            "device-id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaaaaaaaa",  # obviously faked
         }
 
         token_url = "https://auth.nextdoor.com/v2/token"
@@ -68,7 +68,9 @@ class PghMayorOfficeCommAffSpider(CityScrapersSpider):
     def _authenticated(self, response):
         url = "https://nextdoor.com/api/profile/2376387/activity/posts/"
         token = loads(response.text)
-        self.cookies.update({'ndbr_at': token['access_token'], 'ndbr_idt': token['id_token']})
+        self.cookies.update(
+            {"ndbr_at": token["access_token"], "ndbr_idt": token["id_token"]}
+        )
         req = Request(url, cookies=self.cookies, callback=self._get_posts)
         yield req
 
@@ -77,13 +79,17 @@ class PghMayorOfficeCommAffSpider(CityScrapersSpider):
         activities = jsonData["activities"]
         for item in activities:
             if "meeting" in item["message_parts"][1]["text"].lower():
-                url = "https://nextdoor.com/web/feeds/post/" + str(item["post_id"]) + "/"
+                url = (
+                    "https://nextdoor.com/web/feeds/post/" + str(item["post_id"]) + "/"
+                )
                 req = Request(url, cookies=self.cookies, callback=self._get_post)
                 yield req
         if jsonData["show_more"]:
             url = "https://nextdoor.com/api/profile/2376387/activity/posts/?next_page="
             req = Request(
-                url + jsonData["next_page"], cookies=self.cookies, callback=self._get_posts
+                url + jsonData["next_page"],
+                cookies=self.cookies,
+                callback=self._get_posts,
             )
             yield req
 

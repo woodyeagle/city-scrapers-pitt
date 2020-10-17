@@ -20,7 +20,7 @@ class PaDevelopmentSpider(CityScrapersSpider):
     start_urls = ["https://dced.pa.gov/wp-json/tribe/events/v1/events"]
 
     def parse(self, response):
-        events = json.loads(response.text)['events']
+        events = json.loads(response.text)["events"]
 
         for item in events:
             meeting = Meeting(
@@ -43,11 +43,11 @@ class PaDevelopmentSpider(CityScrapersSpider):
 
     def _parse_title(self, item):
         """Parse or generate meeting title."""
-        return clean(item['title'])
+        return clean(item["title"])
 
     def _parse_description(self, item):
         """Parse or generate meeting description."""
-        return clean(item['description'])
+        return clean(item["description"])
 
     def _parse_classification(self, item):
         """Parse or generate classification from allowed options."""
@@ -55,12 +55,12 @@ class PaDevelopmentSpider(CityScrapersSpider):
 
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
-        start_time = datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
+        start_time = datetime.strptime(item["start_date"], "%Y-%m-%d %H:%M:%S")
         return start_time
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
-        return datetime.strptime(item['end_date'], '%Y-%m-%d %H:%M:%S')
+        return datetime.strptime(item["end_date"], "%Y-%m-%d %H:%M:%S")
 
     def _parse_time_notes(self, item):
         """Parse any additional notes on the timing of the meeting"""
@@ -68,41 +68,41 @@ class PaDevelopmentSpider(CityScrapersSpider):
 
     def _parse_all_day(self, item):
         """Parse or generate all-day status. Defaults to False."""
-        return item['all_day']
+        return item["all_day"]
 
     def _get_street(self, item):
         try:
-            return clean(item['venue']['address'])
+            return clean(item["venue"]["address"])
         except KeyError:
-            return ''
+            return ""
 
     def _get_city(self, item):
         try:
-            return clean(item['venue']['city'])
+            return clean(item["venue"]["city"])
         except KeyError:
-            return ''
+            return ""
 
     def _get_state(self, item):
         try:
-            return clean(item['venue']['state'])
+            return clean(item["venue"]["state"])
         except KeyError:
-            return ''
+            return ""
 
     def _get_zip(self, item):
         try:
-            return clean(item['venue']['zip'])
+            return clean(item["venue"]["zip"])
         except KeyError:
-            return ''
+            return ""
 
     def _parse_location(self, item):
         """Parse or generate location."""
         address = self._get_street(item)
-        address += ', ' + self._get_city(item)
-        address += ', ' + self._get_state(item)
-        address += ', ' + self._get_zip(item)
+        address += ", " + self._get_city(item)
+        address += ", " + self._get_state(item)
+        address += ", " + self._get_zip(item)
         return {
             "address": address,
-            "name": clean(item['venue']['venue']),
+            "name": clean(item["venue"]["venue"]),
         }
 
     def _parse_links(self, item):
@@ -111,5 +111,5 @@ class PaDevelopmentSpider(CityScrapersSpider):
 
     def _parse_source(self, item):
         """Parse or generate source."""
-        url = item['url']
+        url = item["url"]
         return url

@@ -1,4 +1,4 @@
-name: CI
+name: CrossPlatformCompatibility
 
 on: [push, pull_request]
 
@@ -11,11 +11,12 @@ env:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 3
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -33,17 +34,5 @@ jobs:
       env:
         PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
 
-    - name: Check style with black
-      run: pipenv run black . --check --diff || exit 1
-
-    - name: Test with pytest
-      run: pipenv run pytest
-
-    - name: Validate output with scrapy
-      if: github.event_name == 'pull_request'
-      run: |
-        git checkout ${{ github.base_ref }}
-        git checkout $(git show-ref | grep pull | awk '{ print $2 }')
-        git diff-index --name-only --diff-filter=d $(git merge-base HEAD ${{ github.base_ref }}) | \
-        grep -Pio '(?<=/spiders/).*(?=\.py)' | \
-        xargs pipenv run scrapy validate
+    - name: Test Scrapy
+      run: pipenv run scrapy crawl pitt_art_commission

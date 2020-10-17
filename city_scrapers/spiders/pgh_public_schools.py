@@ -14,7 +14,9 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
     allowed_domains = ["www.pghschools.org", "awsapieast1-prod2.schoolwires.com"]
 
     # start_urls = ["https://www.pghschools.org/calendar"]
-    start_urls = ["https://www.pghschools.org/Generator/TokenGenerator.ashx/ProcessRequest"]
+    start_urls = [
+        "https://www.pghschools.org/Generator/TokenGenerator.ashx/ProcessRequest"
+    ]
 
     def parse(self, response):
         """
@@ -23,7 +25,7 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         Change the `_parse_id`, `_parse_name`, etc methods to fit your scraping
         needs.
         """
-        json_response = loads(response.body_as_unicode())
+        json_response = loads(response.text)
         token = json_response["Token"]
         # api_server = json_response["ApiServer"]
         api_server = "https://awsapieast1-prod2.schoolwires.com/REST/"
@@ -33,10 +35,16 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         today = datetime.today()
 
         e = today.replace(
-            year=today.year + 10, month=1, day=1, hour=0, minute=0, second=1, microsecond=1
+            year=today.year + 10,
+            month=1,
+            day=1,
+            hour=0,
+            minute=0,
+            second=1,
+            microsecond=1,
         )
         # the end date will be ten years from the date that the script runs
-        end_date = str(e.year) + '-' + str(e.month).zfill(2) + '-' + str(e.day).zfill(2)
+        end_date = str(e.year) + "-" + str(e.month).zfill(2) + "-" + str(e.day).zfill(2)
         dates = "StartDate={}&EndDate={}".format(start_date, end_date)
         modules = "&ModuleInstanceFilter="
 
@@ -62,15 +70,17 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         api_function = "CalendarEvents/GetEventDate/1/"
         url = api_gateway + api_function
 
-        meetings = loads(response.body_as_unicode())
+        meetings = loads(response.text)
 
         for item in meetings:
             detail_url = url + str(item["Id"])
-            meeting = Request(detail_url, headers=headers, callback=self._parse_detail_api)
+            meeting = Request(
+                detail_url, headers=headers, callback=self._parse_detail_api
+            )
             yield meeting
 
     def _parse_detail_api(self, response):
-        item = loads(response.body_as_unicode())
+        item = loads(response.text)
         meeting = Meeting(
             title=self._parse_title(item["Event"]),
             description=self._parse_description(item["Event"]),
@@ -105,13 +115,13 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
         start_string = item["StartDate"]
-        start_time = datetime.strptime(start_string, '%Y-%m-%dT%H:%M:%S')
+        start_time = datetime.strptime(start_string, "%Y-%m-%dT%H:%M:%S")
         return start_time
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
         end_string = item["EndDate"]
-        end_time = datetime.strptime(end_string, '%Y-%m-%dT%H:%M:%S')
+        end_time = datetime.strptime(end_string, "%Y-%m-%dT%H:%M:%S")
         return end_time
 
     def _parse_time_notes(self, item):

@@ -42,13 +42,11 @@ def test_start():
         datetime(year=2019, month=8, day=28, hour=14),
         datetime(year=2019, month=9, day=25, hour=14),
         datetime(year=2019, month=10, day=23, hour=14),
-        datetime(year=2019, month=11, day=20, hour=14)
+        datetime(year=2019, month=11, day=20, hour=14),
     }
 
     actual_start_dates_2019 = {
-        meeting["start"]
-        for meeting in parsed_items
-        if meeting["start"].year == 2019
+        meeting["start"] for meeting in parsed_items if meeting["start"].year == 2019
     }
 
     assert expected_start_dates_2019 == actual_start_dates_2019
@@ -77,43 +75,56 @@ def test_links():
     def link_name(file):
         return "http://apps.pittsburghpa.gov/redtail/images/{}".format(file)
 
-    link_test_cases = [{
-        "month": 1,
-        "year": 2019,
-        "links": [{
-            "title": "January_2019_AC_Minutes.pdf",
-            "href": link_name("5026_January_2019_AC_Minutes.pdf")
-        }]
-    }, {
-        "month": 2,
-        "year": 2019,
-        "links": [{
-            "title": "2-27-19_AC_Agenda.pdf",
-            "href": link_name("4891_2-27-19_AC_Agenda.pdf")
-        }, {
-            "title": "February_2019_AC_Minutes.pdf",
-            "href": link_name("5413_February_2019_AC_Minutes.pdf")
-        }]
-    }, {
-        "month": 1,
-        "year": 2018,
-        "links": [{
-            "title": "1_24_18_ACAgenda.pdf",
-            "href": link_name("1440_1_24_18_ACAgenda.pdf")
-        }, {
-            "title": "1_24_18_AC_Minutes_with_SF_Interim_Report.pdf",
-            "href": link_name("1877_1_24_18_AC_Minutes_with_SF_Interim_Report.pdf")
-        }]
-    }, {
-        "month": 10,
-        "year": 2019,
-        "links": []
-    }]
+    link_test_cases = [
+        {
+            "month": 1,
+            "year": 2019,
+            "links": [
+                {
+                    "title": "January_2019_AC_Minutes.pdf",
+                    "href": link_name("5026_January_2019_AC_Minutes.pdf"),
+                }
+            ],
+        },
+        {
+            "month": 2,
+            "year": 2019,
+            "links": [
+                {
+                    "title": "2-27-19_AC_Agenda.pdf",
+                    "href": link_name("4891_2-27-19_AC_Agenda.pdf"),
+                },
+                {
+                    "title": "February_2019_AC_Minutes.pdf",
+                    "href": link_name("5413_February_2019_AC_Minutes.pdf"),
+                },
+            ],
+        },
+        {
+            "month": 1,
+            "year": 2018,
+            "links": [
+                {
+                    "title": "1_24_18_ACAgenda.pdf",
+                    "href": link_name("1440_1_24_18_ACAgenda.pdf"),
+                },
+                {
+                    "title": "1_24_18_AC_Minutes_with_SF_Interim_Report.pdf",
+                    "href": link_name(
+                        "1877_1_24_18_AC_Minutes_with_SF_Interim_Report.pdf"
+                    ),
+                },
+            ],
+        },
+        {"month": 10, "year": 2019, "links": []},
+    ]
 
     for test_case in link_test_cases:
         matching_items = [
-            item for item in parsed_items
-            if item["start"].month == test_case["month"] and item["start"].year == test_case["year"]
+            item
+            for item in parsed_items
+            if item["start"].month == test_case["month"]
+            and item["start"].year == test_case["year"]
         ]
         assert len(matching_items) == 1
         matching_item = matching_items[0]

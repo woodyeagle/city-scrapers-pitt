@@ -12,7 +12,8 @@ root_url = "https://alleghenycounty.us"
 
 test_response = file_response(
     join(dirname(__file__), "files", "alle_finance_dev.html"),
-    url=root_url + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
+    url=root_url
+    + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx",
 )
 spider = AlleFinanceDevSpider()
 
@@ -48,8 +49,8 @@ def test_time_notes():
 
 def test_id():
     assert parsed_items[0]["id"] == (
-        "alle_finance_dev/202001280930/x/" +
-        "allegheny_county_finance_and_development_commission_meeting"
+        "alle_finance_dev/202001280930/x/"
+        + "allegheny_county_finance_and_development_commission_meeting"
     )
 
 
@@ -60,14 +61,14 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "One Chatham Center, Suite 900",
-        "address": "112 Washington Place, Pittsburgh, PA 15219"
+        "address": "112 Washington Place, Pittsburgh, PA 15219",
     }
 
 
 def test_source():
     assert parsed_items[0]["source"] == (
-        "https://alleghenycounty.us" +
-        "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
+        "https://alleghenycounty.us"
+        + "/economic-development/authorities/meetings-reports/fdc/meetings.aspx"
     )
 
 

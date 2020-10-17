@@ -9,7 +9,7 @@ from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
 
 # Downloads the json list dictating what pages are to be crawled:
-json_url = 'http://www.ura.org/events.json'
+json_url = "http://www.ura.org/events.json"
 url = urllib.request.urlopen(json_url)
 json_events = json.loads(url.read().decode())
 
@@ -17,11 +17,11 @@ json_events = json.loads(url.read().decode())
 # Accepts an iso_8601 string, returns an equivalent datetime object.
 # This method does not change its' output according to the local timezone.
 def _pittsburgh_iso_to_datetime(iso_string):
-    expression = '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
-    expression += 'T[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]'
+    expression = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]"
+    expression += "T[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]"
     time_regex = re.compile(expression)
     shortened_8601_string = re.findall(time_regex, iso_string)[0]
-    format = '%Y-%m-%dT%H:%M:%S.%f'
+    format = "%Y-%m-%dT%H:%M:%S.%f"
     datetime_string = datetime.strptime(shortened_8601_string, format)
     return datetime_string
 
@@ -40,7 +40,7 @@ class MLStripper(HTMLParser):
         self.fed.append(d)
 
     def get_data(self):
-        return ''.join(self.fed)
+        return "".join(self.fed)
 
 
 # Accepts an html string, returns a string without any html tags.
@@ -56,15 +56,15 @@ def strip_tags(html):
 # Returns an array of urls representing meeting detail pages
 def get_ura_urls():
     urls = []
-    base = 'https://www.ura.org/events/housing-opportunity-fund-advisory-board-meeting?day='
-    searchKey = 'Housing Opportunity Fund Advisory Board Meeting'
+    base = "https://www.ura.org/events/housing-opportunity-fund-advisory-board-meeting?day="
+    searchKey = "Housing Opportunity Fund Advisory Board Meeting"
     for event in json_events:
-        if searchKey in event['title']:
-            candidate = _pittsburgh_iso_to_datetime(event['start'])
+        if searchKey in event["title"]:
+            candidate = _pittsburgh_iso_to_datetime(event["start"])
             month = str(candidate.month)
             day = str(candidate.day)
             year = str(candidate.year)
-            date_url_query_parameter = month + '-' + day + '-' + year
+            date_url_query_parameter = month + "-" + day + "-" + year
             urls.append(str(base + date_url_query_parameter))
     return urls
 
@@ -107,7 +107,7 @@ class PittHousingOppSpider(CityScrapersSpider):
     def _parse_description(self, item):
         """Parse or generate meeting description."""
         desc = item.xpath('//*[@id="main"]/div/div[2]/div[2]/div[1]').get()
-        return re.sub('\n', '', strip_tags(desc))
+        return re.sub("\n", "", strip_tags(desc))
 
     def _parse_classification(self, item):
         """Parse or generate classification from allowed options."""
@@ -116,40 +116,40 @@ class PittHousingOppSpider(CityScrapersSpider):
     def _parse_date(self, item):
         """Parse the date as a string. Helper function to _parse_start and _parse_end."""
         date_xpath = '//*[@id="main"]/div/div[1]/div/div[1]/div[1]'
-        date_pair = strip_tags(item.xpath(date_xpath).get()).split('.')
+        date_pair = strip_tags(item.xpath(date_xpath).get()).split(".")
         month = date_pair[0]
         day = date_pair[1]
         year_xpath = '//*[@id="main"]/div/div[1]/div/div[1]/div[2]'
         year = strip_tags(item.xpath(year_xpath).get())
-        return year + '-' + month + '-' + day
+        return year + "-" + month + "-" + day
 
     def _parse_times_helper(self, item):
         """Parse the start/end times as an array"""
         times_xpath = '//*[@id="main"]/div/div[1]/div/div[2]/div[1]'
         times_raw = strip_tags(item.xpath(times_xpath).get())
-        expression = '(.[0-9]:[0-9][0-9].(A|P|a|p).?(M|m).?)'
+        expression = "(.[0-9]:[0-9][0-9].(A|P|a|p).?(M|m).?)"
         times_clean = re.findall(expression, times_raw)
         return times_clean
 
     def _parse_start_time_of_day(self, item):
-        return re.sub(' ', '', self._parse_times_helper(item)[0][0])
+        return re.sub(" ", "", self._parse_times_helper(item)[0][0])
 
     def _parse_end_time_of_day(self, item):
-        return re.sub(' ', '', self._parse_times_helper(item)[1][0])
+        return re.sub(" ", "", self._parse_times_helper(item)[1][0])
 
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
         date = self._parse_date(item)
         start_time = self._parse_start_time_of_day(item)
-        date_string = str(date) + ' ' + str(start_time)
-        return datetime.strptime(date_string, '%Y-%m-%d %I:%M%p')
+        date_string = str(date) + " " + str(start_time)
+        return datetime.strptime(date_string, "%Y-%m-%d %I:%M%p")
 
     def _parse_end(self, item):
         """Parse end datetime as a naive datetime object. Added by pipeline if None"""
         date = self._parse_date(item)
         end_time = self._parse_end_time_of_day(item)
-        date_string = str(date) + ' ' + str(end_time)
-        return datetime.strptime(date_string, '%Y-%m-%d %I:%M%p')
+        date_string = str(date) + " " + str(end_time)
+        return datetime.strptime(date_string, "%Y-%m-%d %I:%M%p")
 
     def _parse_time_notes(self, item):
         """Parse any additional notes on the timing of the meeting"""
@@ -161,9 +161,11 @@ class PittHousingOppSpider(CityScrapersSpider):
 
     def _parse_location(self, item):
         """Parse or generate location."""
-        venue_name = strip_tags(item.xpath('//*[@id="main"]/div/div[1]/div/div[2]/div[2]').get())
+        venue_name = strip_tags(
+            item.xpath('//*[@id="main"]/div/div[1]/div/div[2]/div[2]').get()
+        )
         xpath = '//*[@id="main"]/div/div[1]/div/div[2]/div[3]'
-        venue_address = re.sub('\n', ', ', strip_tags(item.xpath(xpath).get()))
+        venue_address = re.sub("\n", ", ", strip_tags(item.xpath(xpath).get()))
         return {
             "address": venue_address,
             "name": venue_name,

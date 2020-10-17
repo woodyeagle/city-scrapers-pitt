@@ -40,7 +40,7 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "Pennsylvania Liquor Control Board Headquarters",
-        "address": "Room 117, 604 Northwest Office Building, Harrisburg, PA 17124"
+        "address": "Room 117, 604 Northwest Office Building, Harrisburg, PA 17124",
     }
 
 

@@ -29,8 +29,10 @@ Uncomment below
 
 
 def test_title():
-    assert parsed_items[0][
-        "title"] == "CMU IMP Amendment for Scaife Hall and Zone Change Petition (parcel53-B-100)"
+    assert (
+        parsed_items[0]["title"]
+        == "CMU IMP Amendment for Scaife Hall and Zone Change Petition (parcel53-B-100)"
+    )
 
 
 def test_description():
@@ -58,8 +60,8 @@ def test_time_notes():
 
 def test_location():
     assert parsed_items[0]["location"] == {
-        "name": '',
-        "address": '200 Ross Street, 1stFloor Conference Room'
+        "name": "",
+        "address": "200 Ross Street, 1stFloor Conference Room",
     }
 
 
@@ -68,22 +70,26 @@ def test_location():
 
 
 def test_links():
-    url_begin = 'https://apps.pittsburghpa.gov/redtail/'
-    assert parsed_items[0]["links"] == [{
-        'href': url_begin + 'images/6132_CMU_IMP_amendment_Application.pdf',
-        'title': 'Amendment'
-    }, {
-        'href':
-            url_begin +
-            'images/6134_Institutional_Master_Plan_with_draft_amendments_highlighted.pdf',
-        'title': 'amendments highlighted'
-    }, {
-        'href': url_begin + 'images/6133_CMU_Zone_Change_Petition_Application.pdf',
-        'title': 'Petition'
-    }, {
-        'href': 'https://apps.pittsburghpa.gov/redtail/images/6135_ZoningCMUMapChange3.pdf',
-        'title': 'Map'
-    }]
+    url_begin = "https://apps.pittsburghpa.gov/redtail/"
+    assert parsed_items[0]["links"] == [
+        {
+            "href": url_begin + "images/6132_CMU_IMP_amendment_Application.pdf",
+            "title": "Amendment",
+        },
+        {
+            "href": url_begin
+            + "images/6134_Institutional_Master_Plan_with_draft_amendments_highlighted.pdf",
+            "title": "amendments highlighted",
+        },
+        {
+            "href": url_begin + "images/6133_CMU_Zone_Change_Petition_Application.pdf",
+            "title": "Petition",
+        },
+        {
+            "href": "https://apps.pittsburghpa.gov/redtail/images/6135_ZoningCMUMapChange3.pdf",
+            "title": "Map",
+        },
+    ]
 
 
 def test_classification():

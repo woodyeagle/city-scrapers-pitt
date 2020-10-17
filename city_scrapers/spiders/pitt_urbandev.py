@@ -18,7 +18,11 @@ class PittUrbandevSpider(CityScrapersSpider):
     start_urls = ["https://www.ura.org/pages/board-meeting-notices-agendas-and-minutes"]
 
     def parse(self, response):
-        soup = response.xpath("//*[@id=\"main\"]/section[3]").get().split("<div class=\"links\">")
+        soup = (
+            response.xpath('//*[@id="main"]/section[3]')
+            .get()
+            .split('<div class="links">')
+        )
 
         normal_location = self._parse_location(response)
         start_hour = self._parse_starting_hour(response)
@@ -65,9 +69,9 @@ class PittUrbandevSpider(CityScrapersSpider):
     def _parse_start(self, item, start_hour):
         try:
             """Parse start datetime as a naive datetime object."""
-            raw = item.split('</h6>')[0]
+            raw = item.split("</h6>")[0]
             raw = re.sub("<h6>", "", raw)
-            start_time = datetime.strptime(raw, '%B %d, %Y')
+            start_time = datetime.strptime(raw, "%B %d, %Y")
 
             if EXPECTED_START_HOUR in start_hour:
                 start_time = start_time.replace(hour=EXPECTED_START_HOUR_AS_INT)
@@ -90,7 +94,7 @@ class PittUrbandevSpider(CityScrapersSpider):
         return False
 
     def _parse_starting_hour(self, response):
-        raw = response.xpath("//*[@id=\"main\"]/section[2]/div[1]/p[1]").get().lower()
+        raw = response.xpath('//*[@id="main"]/section[2]/div[1]/p[1]').get().lower()
         found_start_hour = ""
         if EXPECTED_START_HOUR in raw:
             found_start_hour = EXPECTED_START_HOUR
@@ -98,7 +102,7 @@ class PittUrbandevSpider(CityScrapersSpider):
 
     def _parse_location(self, response):
         """Parse or generate location."""
-        raw = response.xpath("//*[@id=\"main\"]/section[2]/div[1]/p[1]").get().lower()
+        raw = response.xpath('//*[@id="main"]/section[2]/div[1]/p[1]').get().lower()
         expected_address = "412 Boulevard of the Allies, Pittsburgh, PA 15219"
         expected_room_name = "Lower Level Conference Room"
         found_address = ""
@@ -119,20 +123,20 @@ class PittUrbandevSpider(CityScrapersSpider):
         """Parse or generate links."""
         links = []
         try:
-            raw_hrefs = re.findall(r'\/media\/[\S]*pdf', item)
+            raw_hrefs = re.findall(r"\/media\/[\S]*pdf", item)
             hrefs = []
 
             for href in raw_hrefs:
                 hrefs.append(BASE_URL + href)
 
-            raw_titles = re.split(r'.pdf', item)
+            raw_titles = re.split(r".pdf", item)
             titles = []
 
             for i in range(1, len(raw_titles)):
                 raw_title = raw_titles[i]
-                raw_title = re.sub('\">', '', raw_title)
-                raw_title = re.sub(r'<\/a', '', raw_title)
-                clean_title = re.sub('>.*', '', raw_title)
+                raw_title = re.sub('">', "", raw_title)
+                raw_title = re.sub(r"<\/a", "", raw_title)
+                clean_title = re.sub(">.*", "", raw_title)
                 titles.append(clean_title)
 
             for j in range(0, len(hrefs)):

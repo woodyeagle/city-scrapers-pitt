@@ -1,57 +1,69 @@
-import datetime
-import re
-from urllib.parse import urljoin
+from datetime import datetime  # convert utc time to datetime
+from html.parser import HTMLParser  # clean up HTML
 
-from city_scrapers_core.constants import NOT_CLASSIFIED
+from city_scrapers_core.constants import BOARD
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
-from scrapy.utils.response import get_base_url
-
-RE_URL = re.compile(r'(?P<date>(\d{1,2}-\d{1,2}-\d{1,2}))-(?P<dtype>(\w+)).aspx')
 
 
-def construct_dt(date_str, time_str):
-    return datetime.datetime.strptime('{} {}'.format(date_str, time_str), '%B %d, %Y %I:%M %p')
+# Helper class for clean_date
+class MLStripper(HTMLParser):
+    # original author: eloff
+    # source: https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
+    def __init__(self):
+        self.reset()
+        self.strict = False
+        self.convert_charrefs = True
+        self.fed = []
+
+    def handle_data(self, d):
+        self.fed.append(d)
+
+    def get_data(self):
+        return "".join(self.fed)
+
+
+# Accepts an html string, returns a string without any html tags.
+# For example, clean_date("<h1>foo</h1>") will return just "foo".
+def clean_date(html):
+    # original author: eloff
+    # source: https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
+    s = MLStripper()
+    html = html.replace("\xa0", "")
+    html = html.replace("\r", "")
+    html = html.replace("\n", "")
+    s.feed(html)
+    cleaned = s.get_data()
+    cleaned = cleaned.replace(" ", "")  # Strip whitespace
+    return cleaned
 
 
 class AlleImprovementsSpider(CityScrapersSpider):
     name = "alle_improvements"
     agency = "Allegheny County Authority for Improvements in Municipalities (AIM)"
     timezone = "America/New_York"
-    allowed_domains = ["county.allegheny.pa.us"]
     start_urls = [
         (
-            "https://www.county.allegheny.pa.us/economic-development/"
+            "https://www.alleghenycounty.us/economic-development/"
             "authorities/meetings-reports/aim/meetings.aspx"
         ),
     ]
 
-    def parse(self, response):
-        data = response.xpath("//table[@dropzone='copy']")
+    def parse(self, response) -> Meeting:
+        self._check_starting_hour_has_not_changed(response)
+        meeting_dates: list = self._parse_meeting_dates_list(response)
 
-        time_str = self._parse_start_time(data)
-        date_strs = self._parse_dates(data)
-        location = self._parse_location(data)
-
-        assert time_str is not None
-
-        agenda_links, minute_links = self._parse_pdf_links(response)
-
-        no_item = None
-
-        for ds in date_strs:
-            start = construct_dt(ds, time_str)
-
+        for item in meeting_dates:
             meeting = Meeting(
-                title=self._parse_title(no_item),
-                description=self._parse_description(no_item),
-                classification=self._parse_classification(no_item),
-                start=start,
-                end=self._parse_end(no_item),
-                all_day=self._parse_all_day(no_item),
-                time_notes=self._parse_time_notes(no_item),
-                location=location,
-                links=self._parse_links(ds, agenda_links, minute_links),
+                title=self._parse_title(),
+                description=self._parse_description(),
+                classification=self._parse_classification(),
+                start=self._parse_start(item),
+                end=self._parse_end(item),
+                all_day=self._parse_all_day(item),
+                time_notes=self._parse_time_notes(item),
+                location=self._parse_location(item),
+                links=self._parse_links(item),
                 source=self._parse_source(response),
             )
 
@@ -60,100 +72,55 @@ class AlleImprovementsSpider(CityScrapersSpider):
 
             yield meeting
 
-    def _parse_title(self, item):
-        """Parse or generate meeting title."""
-        return (
-            "Authority For Improvements In Municipalities Board Of Directors "
-            "Regular And Public Hearing"
-        )
+    def _parse_meeting_dates_list(self, response) -> list:
+        root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]'
+        path: str = root + "/div/div/div/div/div/table/tbody/tr/td[2]/p"
+        dates_list: list = response.xpath(path)[0].get().split("<br>")
+        dates_list = list(map(clean_date, dates_list))
+        return dates_list
 
-    def _parse_description(self, item):
-        """Parse or generate meeting description."""
+    def _parse_title(self) -> str:
+        return f"{self.agency} Board Meeting"
+
+    def _parse_description(self) -> str:
         return ""
 
-    def _parse_classification(self, item):
-        """Parse or generate classification from allowed options."""
-        return NOT_CLASSIFIED
+    def _parse_classification(self) -> str:
+        return BOARD
 
-    def _parse_dates(self, data):
-        """Helper to extract list of meeting dates"""
-        raw = data.xpath(".//td[contains(., 'Schedule')]/following-sibling::td//p/text()").extract()
-        return [' '.join(r.strip().split()) for r in raw if r.strip()]
+    def _check_starting_hour_has_not_changed(self, response):
+        expected: str = "All meetings start at 9:30 am"
+        root: str = '//*[@id="mainContainer"]/div[3]/section/div[1]/div[2]/'
+        path: str = root + "div/div/div/div/div/table/tbody/tr/td[1]/p[2]/text()"
+        assert response.xpath(path).get() == expected
 
-    def _parse_start_time(self, data):
-        """Helper to extract time str of meeting"""
-        tmp = data.xpath(".//td[contains(., 'Time')]/following-sibling::td/text()").extract_first()
-        return ' '.join(tmp.split())
+    def _parse_start(self, item) -> datetime:
+        date: datetime = datetime.strptime(item, "%B%d,%Y")
+        # Every meeting is assumed to take place at 9:30am
+        # as asserted by _check_starting_hour_has_not_changed
+        date_with_time_of_day: datetime = date.replace(hour=9, minute=30)
+        return date_with_time_of_day
 
-    def _parse_end(self, item):
-        """Parse end datetime as a naive datetime object. Added by pipeline if None"""
+    def _parse_end(self, item) -> datetime:
         return None
 
-    def _parse_time_notes(self, item):
-        """Parse any additional notes on the timing of the meeting"""
+    def _parse_time_notes(self, item) -> str:
         return ""
 
-    def _parse_all_day(self, item):
-        """Parse or generate all-day status. Defaults to False."""
+    def _parse_all_day(self, item) -> bool:
         return False
 
-    def _parse_location(self, item):
-        """Parse or generate location."""
-        raw = [
-            r.strip() for r in
-            item.xpath(".//td[contains(., 'Location')]/following-sibling::td/text()").extract()
-        ]
-
+    def _parse_location(self, item) -> dict:
         return {
-            "address": '\n'.join(raw[1:]),
-            "name": raw[0],
+            "address": "One Chatham Center, Suite 900, 112 Washington Place, Pittsburgh, PA 15219",
+            "name": "Chatham Center",
         }
 
-    def _parse_source(self, response):
+    def _parse_links(self, item) -> list:
+        """Parse or generate links."""
+        # TODO This would be a "nice to have" but is not necessary right now.
+        return [{"href": "", "title": ""}]
+
+    def _parse_source(self, response) -> str:
         """Parse or generate source."""
         return response.url
-
-    def _parse_pdf_links(self, response):
-        """Generate dict of (date, link) key values for agenda and minutes"""
-        urls = response.xpath(
-            '//a[contains(@href, "-minutes.aspx") or contains(@href, "-agenda.aspx")]/@href'
-        ).extract()
-
-        agendas = {}
-        minutes = {}
-
-        for url in urls:
-            tmp = url.split('/')[-1]
-
-            try:
-                parsed = RE_URL.search(tmp).groupdict()
-            except Exception:
-                continue
-
-            dtype = parsed.get('dtype')
-            date = parsed.get('date')
-
-            if dtype is None or date is None:
-                continue
-
-            full_url = urljoin(get_base_url(response), url)
-
-            if dtype == 'minutes':
-                minutes[date] = full_url
-            elif dtype == 'agenda':
-                agendas[date] = full_url
-
-        return agendas, minutes
-
-    def _parse_links(self, date_str, agenda_links, minute_links):
-        links = []
-
-        dsx = datetime.datetime.strptime(date_str, "%B %d, %Y").strftime('%m-%d-%y')
-
-        if dsx in agenda_links:
-            links.append({"href": agenda_links[dsx], "title": "Agenda {}".format(dsx)})
-
-        if dsx in minute_links:
-            links.append({"href": minute_links[dsx], "title": "Minutes {}".format(dsx)})
-
-        return links

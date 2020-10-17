@@ -8,8 +8,8 @@ from dateutil.parser import parse
 url = "http://www.puc.pa.gov/about_puc/public_meeting_calendar/public_meeting_audio_summaries_.aspx"
 
 # Pulled this information from the site's PDFs
-ADDRESS = "400 North St, Harrisburg, PA 17120",
-LOCATION_NAME = "MAIN HEARING ROOM NO. 1 SECOND FLOOR COMMONWEALTH KEYSTONE BUILDING",
+ADDRESS = ("400 North St, Harrisburg, PA 17120",)
+LOCATION_NAME = ("MAIN HEARING ROOM NO. 1 SECOND FLOOR COMMONWEALTH KEYSTONE BUILDING",)
 
 # The meetings always seem to being at 10AM; this isn't reported on the page itself,
 # but is derived from reading minutes/agenda pdfs.
@@ -31,24 +31,24 @@ class PaUtilitySpider(CityScrapersSpider):
        """
 
         self.logger.info("PARSING")
-        content = response.css('.center').xpath('.//text()').getall()
+        content = response.css(".center").xpath(".//text()").getall()
         # self.logger.warning(content)
 
         # this was necessary to make pytest consistent with scarpy
-        content = [text.lstrip('\r') for text in content]
+        content = [text.lstrip("\r") for text in content]
         # self.logger.warning(content)
 
         # the following text appears before the meeting dates are listed
-        meeting_start_flag = '\n\tPublic Meeting Dates'
+        meeting_start_flag = "\n\tPublic Meeting Dates"
 
         for i, item in enumerate(content):
             if item == meeting_start_flag:
                 break
-        meeting_content = content[i + 1:]
+        meeting_content = content[i + 1 :]
         # self.logger.warning(meeting_content)
 
         # filter to text that includes the meet dates
-        meeting_dates = [d for d in meeting_content if str.startswith(d, '\n\t')]
+        meeting_dates = [d for d in meeting_content if str.startswith(d, "\n\t")]
         # self.logger.warning(meeting_dates)
 
         for date_str in meeting_dates:
@@ -64,7 +64,7 @@ class PaUtilitySpider(CityScrapersSpider):
                 time_notes=self._parse_time_notes(date_str),
                 location=self._parse_location(date_str),
                 links=self._parse_links(date_str),
-                source=self._parse_source(response)
+                source=self._parse_source(response),
             )
 
             meeting["status"] = self._get_status(meeting)

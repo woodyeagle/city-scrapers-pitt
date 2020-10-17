@@ -43,7 +43,10 @@ def test_time_notes():
 
 
 def test_id():
-    assert parsed_items[0]["id"] == "pitt_ethics_board/202002111615/x/ethics_hearing_board_meeting"
+    assert (
+        parsed_items[0]["id"]
+        == "pitt_ethics_board/202002111615/x/ethics_hearing_board_meeting"
+    )
 
 
 def test_status():
@@ -53,7 +56,7 @@ def test_status():
 def test_location():
     assert parsed_items[0]["location"] == {
         "name": "City-County Building, Room 646",
-        "address": "414 Grant St, Pittsburgh, PA 15219"
+        "address": "414 Grant St, Pittsburgh, PA 15219",
     }
 
 
@@ -62,10 +65,10 @@ def test_source():
 
 
 def test_links():
-    url = 'https://apps.pittsburghpa.gov'
-    url += '/redtail/images/'
-    url += '8493_ETHICS_HEARING_BOARD_AGENDA_FEB_11.pdf'
-    expected = [{'href': url, 'title': 'Agenda'}]
+    url = "https://apps.pittsburghpa.gov"
+    url += "/redtail/images/"
+    url += "8493_ETHICS_HEARING_BOARD_AGENDA_FEB_11.pdf"
+    expected = [{"href": url, "title": "Agenda"}]
     assert parsed_items[0]["links"] == expected
 
 

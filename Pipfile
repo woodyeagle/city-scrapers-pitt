@@ -4,22 +4,22 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-scrapy = "*"
+city-scrapers-core = {extras = ["aws"],version = "*"}
+esprima = "*"
+icalendar = "*"
+ics = "*"
+legistar = {git = "https://github.com/opencivicdata/python-legistar-scraper"}
 python-dateutil = "*"
 pytz = "*"
+pywin32 = {version = "*", sys_platform = "== 'win32'"}
+requests = "*"
+scrapelib = "*"
+scrapy = "*"
 scrapy-sentry = "*"
 scrapy-wayback-middleware = "*"
-city-scrapers-core = {extras = ["aws"],version = "*"}
-legistar = {git = "https://github.com/opencivicdata/python-legistar-scraper"}
-pypiwin32 = {version = "*", sys_platform = "== 'win32'"}
 
 [dev-packages]
+black = "==19.10b0"
 freezegun = "*"
-"flake8" = "*"
-isort = "*"
-yapf = "*"
+pathlib2 = {version = "*",python_version = "< '3.6'"}
 pytest = "*"
-
-[scripts]
-style = "yapf --in-place --recursive ./city_scrapers/ ./tests/"

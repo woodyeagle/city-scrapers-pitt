@@ -9,7 +9,7 @@ from city_scrapers_core.spiders import CityScrapersSpider
 class PittEthicsBoardSpider(CityScrapersSpider):
     name = "pitt_ethics_board"
     agency = "Pittsburgh Ethics Hearing Board"
-    timezone = "America/Chicago"
+    timezone = "America/New_York"
     start_urls = ["http://pittsburghpa.gov/ehb/ehb-meetings"]
     LOCATION = {
         "address": "414 Grant St, Pittsburgh, PA 15219",
@@ -33,20 +33,20 @@ class PittEthicsBoardSpider(CityScrapersSpider):
         # We split the soup by the collapsing accordions
         # The [1:-1] slice is to get rid of the first and last elements of the list,
         # which were not relevant to our needs.
-        meetings_split_by_accordions = meeting_soup.split('collapsing-content')[1:-1]
+        meetings_split_by_accordions = meeting_soup.split("collapsing-content")[1:-1]
 
         # This represents all columns in all years containing meetings. Each index
         # represents a column in the DOM.
         all_columns = []
         for year_soup in meetings_split_by_accordions:
-            year_columns = year_soup.split('col-lg-4')[1:]
+            year_columns = year_soup.split("col-lg-4")[1:]
             for year_column in year_columns:
                 all_columns.append(year_column)
 
         # Now we go through each column and split it into meetings:
         meetings = []
         for column in all_columns:
-            for meeting in column.split(r'<p><strong>')[1:]:
+            for meeting in column.split(r"<p><strong>")[1:]:
                 meetings.append(meeting)
 
         for item in meetings:
@@ -82,7 +82,7 @@ class PittEthicsBoardSpider(CityScrapersSpider):
 
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
-        time_soup = item.split('</strong>')[0]
+        time_soup = item.split("</strong>")[0]
         start_time = dateutil.parser.parse(time_soup)
         return start_time
 
@@ -104,12 +104,12 @@ class PittEthicsBoardSpider(CityScrapersSpider):
 
     def _parse_links(self, item):
         """Parse or generate links."""
-        a_tags = item.split('href=')[1:]
+        a_tags = item.split("href=")[1:]
         # Break the a_tags into hrefs and titles
         links = []
         for a_tag in a_tags:
-            href = re.findall(r'\"[^\"]*\"', a_tag)[0].strip("\"")
-            title = re.findall(r'>.*</a>', a_tag)[0].strip(">").strip("//a>").strip("<")
+            href = re.findall(r"\"[^\"]*\"", a_tag)[0].strip('"')
+            title = re.findall(r">.*</a>", a_tag)[0].strip(">").strip("//a>").strip("<")
             links.append({"href": href, "title": title})
 
         return links
