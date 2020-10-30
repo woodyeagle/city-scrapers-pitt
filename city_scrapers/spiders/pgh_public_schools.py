@@ -145,9 +145,12 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
     def _parse_links(self, item):
         """Parse or generate links."""
         regex = compile(r"<a\s+(?:[^>]*?\s+)?href=([\"\'])(.*?)\1.*\>(.*)<\/a>")
-        links = [{"href":href, "title":title} for (_, href, title) in findall(regex, item["Event"]["Description"])]
+        links = [
+            {"href": href, "title": title}
+            for (_, href, title) in findall(regex, item["Event"]["Description"])
+        ]
         for link in links:
-            if (link["href"][0] == "/"):
+            if link["href"][0] == "/":
                 link["href"] = "https://www.pghschools.org" + link["href"]
         return links
 
@@ -156,7 +159,13 @@ class PghPublicSchoolsSpider(CityScrapersSpider):
         # https://www.pghschools.org/calendar#calendar1/20190205/event/19034
         date_raw = item["StartDate"]
         date_object = datetime.strptime(date_raw, "%Y-%m-%dT%H:%M:%S")
-        date_formatted = str(date_object.year) + str(date_object.month).zfill(2) + str(date_object.day).zfill(2)
-        source = "https://www.pghschools.org/Page/60#calendar66/{}/event/{}".format(date_formatted, item["Id"])
-        
+        date_formatted = (
+            str(date_object.year)
+            + str(date_object.month).zfill(2)
+            + str(date_object.day).zfill(2)
+        )
+        source = "https://www.pghschools.org/Page/60#calendar66/{}/event/{}".format(
+            date_formatted, item["Id"]
+        )
+
         return source
