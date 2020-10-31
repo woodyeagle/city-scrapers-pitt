@@ -37,8 +37,8 @@ class PaLiquorboardSpider(CityScrapersSpider):
         select_txt2 = "//*[@id='" + sel_id + "']" + sel_path2
         # Identify CSS node or XPath you're interested in
         meetings = response.xpath(select_txt).extract()  # Make variable of that text
-        meetings += response.xpath(select_txt2).extract() 
-        print (meetings)
+        meetings += response.xpath(select_txt2).extract()
+        print(meetings)
         for item in meetings:
 
             meeting = Meeting(
@@ -76,7 +76,9 @@ class PaLiquorboardSpider(CityScrapersSpider):
         # Remove garbage from our date item:
         date_split = item.split(",")
         date_string = "".join(date_split[1:])[1:]
-        start_datetime = datetime.strptime(date_string + " " + str(start_hour) + ":00:00", "%B %d %Y %H:%M:%S")
+        start_datetime = datetime.strptime(
+            date_string + " " + str(start_hour) + ":00:00", "%B %d %Y %H:%M:%S"
+        )
         return start_datetime
 
     def _parse_end(self, item):
