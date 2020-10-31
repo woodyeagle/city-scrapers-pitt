@@ -39,7 +39,6 @@ class PaLiquorboardSpider(CityScrapersSpider):
         meetings += response.xpath(select_txt2).extract()
 
         container = response.xpath('//*[@id="container"]').extract()
-        print(container)
         match = re.search(r"(\d{2}:\d{2}) ?(AM|PM)", container[0])
         time = match.group(1) if match else EXPECTED_START_HOUR
         for item in meetings:
