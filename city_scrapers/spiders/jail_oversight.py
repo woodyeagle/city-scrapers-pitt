@@ -20,7 +20,6 @@ class JailOversightSpider(CityScrapersSpider):
         needs.
         """
         for possible_meeting in response.css("div.entry-content p"):
-            #        for item in response.css("div.entry-content p").re('.*'):
             possible_meeting_date = possible_meeting.re(
                 "^<p>(?:<strong>)?([ADFJMNOS][a-z]{2,8} [1-3]?[0-9], [12][0-9]{3})"
             )
@@ -46,7 +45,6 @@ class JailOversightSpider(CityScrapersSpider):
 
     def _parse_start(self, item):
         """Parse start datetime as a naive datetime object."""
-        #        datetext = re.search(r"[ADFJMNOS][a-z]{2,8}\s[1-3]?[0-9],\s[12][0-9]{3}", item)
         meeting_date = datetime.strptime(item, "%B %d, %Y")
         return datetime.combine(meeting_date, time(16, 0))
 
