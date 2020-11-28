@@ -1,4 +1,4 @@
-# Installing Python On Pipenv Windows
+# Installing Python and Pipenv On Windows
 
 You can either install python from the Microsoft Store or from the python
 website. It is recommended to install the Microsoft Store as it is better
@@ -7,7 +7,7 @@ integrated into the system.
 ## Actually Installing Python
 
 #### Installing from the Microsoft Store
-Open up the microsoft store and use the search to find python. Below is a
+Open up the Microsoft store and use the search to find python. Below is a
 screenshot of the install for python 3.8. By the way it may ask you to sign
 after you click "Get" but you don't actually need to.
 
@@ -30,7 +30,7 @@ quit.
 
 ## Setting Your Environment Variables
 
-### Background
+### Background on Pipenv
 You can install a bunch of different programs with python. For instance, later
 on we will be installing a program called Pipenv. Python puts that program into
 a "Scripts" folder, however, by default windows doesn't know where that
@@ -39,7 +39,7 @@ list of folders. When you try to run a program like Pipenv windows will look
 for a program called "Pipenv" in every folder in the Path variable. So what we
 need to do is add the "Scripts" folder to the Path variable.
 
-### Finding the Scripts folder
+### Installing Pipenv and finding the Scripts folder
 Unfortunately, the easiest way to find the Scripts folder is to install
 something. Note for all the following commands, if `pip` doesn't work you may
 have to use `pip.exe` instead.
